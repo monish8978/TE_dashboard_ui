@@ -1,0 +1,706 @@
+/* General Body Styling */
+body {
+        font-family: Verdana !important;  /* Applies Verdana font to the entire body */
+}
+
+/* CSS Class for a specific element */
+.css-1siy2j7 {
+        width: 20rem;  /* Sets width to 16rem for elements with this class */
+        /* font-size: 0.8rem !important; */
+}
+
+#bui-24 {
+        left: 60px;  /* Positions the element 60px from the left edge */
+}
+
+.css-hxt7ib {
+        padding-top: 1rem;  
+}
+
+
+.css-1siy2j7 {
+        top: 0px;  /* Sets the top position to 0px for elements with this class */
+}
+
+.css-18e3th9 {
+        padding: 1.5rem 1rem 10rem;  /* Applies padding of 1.5rem top, 1rem left/right, and 10rem bottom */
+}
+
+div#dashboard_data {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 3.875rem;
+    background: #0a72c2;
+    outline: none;
+    z-index: 9999;
+    padding: 0.75rem 6rem 0.9rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+div#dashboard_data p {
+        margin-bottom: 0;  /* Removes the bottom margin from paragraphs */
+        color: #fff;  /* Sets text color to white */
+}
+
+
+div#dashboard_data_msg {
+    position: fixed;
+    top: 22px;
+    /* left: 0; */
+    right: 96px;
+    bottom: 0;
+    z-index: 999999;
+    color: #fff;
+}
+
+.css-awa2zt .test12 img {
+    position: absolute;
+    /* top: 30px; */
+    left: 24%;
+}
+
+/* Styling for buttons */
+.css-9s5bis {
+        background: #f4f3fc;  /* Sets a background color */
+        color: #0a72c2;  /* Sets text color */
+        border-radius: 50%;  /* Rounds the corners to make a circle */
+        transition: 0.5s;  /* Applies a transition effect */
+        margin: 5px 0.125rem!important;  /* Sets margin and uses !important to override other styles */
+}
+
+.css-9s5bis:hover {
+        background: #e1ddfb!important;  /* Changes background color on hover */
+}
+
+/* Grid styling */
+.md-grids, .css-1jqbevm.e1tzin5v2, .css-xxmq3j.e1tzin5v2, .css-1r6slb0.e1tzin5v2 {
+        border: 1px solid #dee2e6;  /* Adds a solid border */
+        border-radius: 5px;  /* Rounds the corners */
+        padding: 0.5rem;  /* Adds padding */
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+        margin-bottom: 1rem;  /* Adds bottom margin */
+}
+
+.sm-grids {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(0 116 194 / 5%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid #0072c2;
+     padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+.sm-grids-green {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(34 197 94 / 8%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(34 197 94);
+     padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+
+.sm-grids-red {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(239 68 68 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(239 68 68);
+     padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+.sm-grids-org {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(245 158 11 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(245 158 11);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+
+.sm-grids-voilet {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(168 85 247 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(168 85 247);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+.sm-grids-teal-green {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(20 184 166 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(20 184 166);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */  
+}
+
+.sm-grids-LightSalmon {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(255 160 122 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(255 160 122);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */
+}
+
+.sm-grids-Olive {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(128, 128, 0 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(128, 128, 0);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */
+}
+
+.sm-grids-Fuchsia {
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgb(255, 0, 255 / 2%);
+    /* border-left: 2px solid #0074c2; */
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid rgb(255, 0, 255);
+    padding: 0.5rem;  /* Adds padding */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;  /* Adds a subtle shadow */
+    margin-bottom: 1rem;  /* Adds bottom margin */
+}
+
+
+.sm-grid-icon-green {
+    width: 40px;
+    height: 40px;
+    background: rgb(34 197 94 / 8%);
+    border-radius: 5px;
+    color: rgb(34 197 94);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-red {
+    width: 40px;
+    height: 40px;
+    background: rgb(239 68 68 / 8%);
+    border-radius: 5px;
+    color: rgb(239 68 68);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-org {
+    width: 40px;
+    height: 40px;
+    background: rgb(245 158 11 / 8%);
+    border-radius: 5px;
+    color: rgb(245 158 11);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-voilet {
+    width: 40px;
+    height: 40px;
+    background: rgb(168 85 247 / 8%);
+    border-radius: 5px;
+    color: rgb(168 85 247);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-teal-green {
+    width: 40px;
+    height: 40px;
+    background: rgb(20 184 166 / 8%);
+    border-radius: 5px;
+    color: rgb(20 184 166);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-LightSalmon {
+    width: 40px;
+    height: 40px;
+    background: rgb(255 160 122 / 8%);
+    border-radius: 5px;
+    color: rgb(255 160 122);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-Olive {
+    width: 40px;
+    height: 40px;
+    background: rgb(128, 128, 0 / 8%);
+    border-radius: 5px;
+    color: rgb(128, 128, 0);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+.sm-grid-icon-Fuchsia {
+    width: 40px;
+    height: 40px;
+    background: rgb(255, 0, 255 / 8%);
+    border-radius: 5px;
+    color: rgb(255, 0, 255);
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+
+.sm-grids-counts-green p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(34 197 94);  /* Sets text color */
+}
+
+.sm-grids-counts-red p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(239 68 68);  /* Sets text color */
+}
+
+.sm-grids-counts-org p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(245 158 11);  /* Sets text color */
+}
+
+.sm-grids-counts-voilet p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(168 85 247);  /* Sets text color */
+}
+
+.sm-grids-counts-teal-green p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(20 184 166);  /* Sets text color */
+}
+
+.sm-grids-counts-LightSalmon p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(255 160 122);  /* Sets text color */
+}
+
+.sm-grids-counts-Olive p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(128, 128, 0);  /* Sets text color */
+}
+
+.sm-grids-counts-Fuchsia p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: rgb(255, 0, 255);  /* Sets text color */
+}
+
+
+.sm-grid-title {
+        font-weight: 600;  /* Makes the font weight bold */
+        color: #000;  /* Sets text color to gray */
+        margin-bottom: 0!important;  /* Removes bottom margin and uses !important */
+}
+
+.sm-grids-counts {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-green {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-red {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-org {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-voilet {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-teal-green {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-LightSalmon {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+.sm-grids-counts-Olive {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+
+.sm-grids-counts-Fuchsia {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-between;  /* Distributes space between items */
+}
+
+
+
+.sm-grids-counts p {
+        font-size: 22px;  /* Sets font size */
+        margin-bottom: 0;  /* Removes bottom margin */
+        color: #000;  /* Sets text color */
+}
+
+.sm-grid-icon {
+    width: 40px;
+    height: 40px;
+    background: rgb(31 127 255 / 14%);
+    border-radius: 5px;
+    color: #0074c2;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+/* Styling for "Not Found" pages */
+#notfound .notfound {
+        left: 55%;  /* Positions the element 55% from the left */
+        position: absolute;  /* Positions the element absolutely */
+        top: 50%;  /* Positions the element 50% from the top */
+        -webkit-transform: translate(-50%, -50%);  /* Centers the element horizontally and vertically */
+        transform: translate(-50%, -50%);  /* Centers the element horizontally and vertically */
+}
+
+.notfound .notfound-404 {
+        height: 500px;  /* Sets height */
+        position: relative;  /* Positions relative to its normal position */
+        z-index: -1;  /* Places the element behind other elements */
+}
+
+.notfound .notfound-404 h1 {
+        -webkit-background-clip: text;  /* Clips the background to the text */
+        background-clip: text;  /* Clips the background to the text */
+        background-position: 50%;  /* Sets background position */
+        background-size: cover;  /* Ensures background covers the element */
+        font-family: Montserrat, sans-serif;  /* Sets font family */
+        font-size: 230px;  /* Sets font size */
+        font-weight: 900;  /* Makes the font weight bold */
+        left: 50%;  /* Positions the element 50% from the left */
+        margin: 0;  /* Removes margin */
+        position: absolute;  /* Positions the element absolutely */
+        -webkit-transform: translateX(-50%);  /* Centers the element horizontally */
+        transform: translateX(-50%);  /* Centers the element horizontally */
+        top: 100% !important;  /* Positions the element at the bottom */
+        line-height: 0 !important;  /* Sets line height to 0 */
+}
+
+.notfound p {
+        margin-top: 200px;  /* Adds top margin */
+        font-size: 14px;  /* Sets font size */
+        font-weight: 400;  /* Sets font weight */
+        margin-bottom: 20px;  /* Adds bottom margin */
+}
+
+/* CSS for specific classes */
+.css-10trblm.e16nr0p30 {
+        font-weight: 600;  /* Makes font weight bold */
+        color: gray;  /* Sets text color to gray */
+        margin-bottom: 0 !important;  /* Removes bottom margin and uses !important */
+}
+
+.egzxvld3 {
+        margin-top: -100px;  /* Adds negative top margin */
+}
+
+/* Container Styling */
+.container {
+        width: 770px;  /* Sets width */
+        text-align: center;  /* Centers text */
+        border: 3px solid #6699cc;  /* Adds border */
+        border-radius: 0px;  /* No border radius */
+        padding: 20px 0 0;  /* Adds padding */
+        font-family: Arial, sans-serif;  /* Sets font family */
+        color: #333;  /* Sets text color */
+        background-color: #deeeff;  /* Sets background color */
+        margin: 80px auto;  /* Centers container with auto margins */
+}
+
+.pr {
+        font-size: 30px;  /* Sets font size */
+        text-decoration: none;  /* Removes text decoration */
+        color: black;  /* Sets text color */
+        font-weight: bold;  /* Makes the font weight bold */
+        padding: 5px 0 5px 12px;  /* Adds padding */
+}
+
+.frt {
+        display: flex;  /* Uses flexbox layout */
+        align-items: center;  /* Centers items vertically */
+        justify-content: space-evenly;  /* Distributes space evenly */
+        padding: 10px 0px 10px 47px;  /* Adds padding */
+        background-color: #3d599a;  /* Sets background color */
+        color: #fff;  /* Sets text color to white */
+}
+
+.frt p {
+        margin: 0;  /* Removes margin */
+        color: white;  /* Sets text color to white */
+        font-size: 12px;  /* Sets font size */
+}
+
+.css-73rld5 a {
+        color: #fff;  /* Sets link color to white */
+}
+
+.container .pr {
+        padding: 40px 0;  /* Adds padding */
+}
+
+a {
+        text-decoration: none;  /* Removes text decoration */
+        color: #333;  /* Sets link color */
+}
+
+/* Button Styling */
+.button {
+        border: none;  /* Removes border */
+        color: ffff !important;  /* Sets text color to white */
+        text-align: center;  /* Centers text */
+        text-decoration: none;  /* Removes text decoration */
+        display: inline-block;  /* Displays as inline-block */
+        font-size: 16px;  /* Sets font size */
+        margin: 4px 2px;  /* Adds margin */
+        cursor: pointer;  /* Shows a pointer cursor on hover */
+        position: fixed;  /* Fixes the position */
+        right: 0px;  /* Positions 24px off the right edge */
+        z-index: 99999;  /* Ensures it is above other elements */
+        font-weight: bold;
+        border: none;  /* Removes border */
+        outline: none;  /* Removes outline */
+        padding: 15px 35px;  /* Adds padding */
+        border-radius: 4px;  /* Rounds corners */
+}
+
+
+
+/* Hover effect for elements with class st-e6 */
+.st-e6:hover {
+        color: #0a72c2 !important;  /* Changes text color on hover */
+}
+
+/* Spinner Styling */
+.stSpinner {
+        position: fixed;  /* Fixes the position */
+        left: 50%;  /* Positions 50% from the left */
+        top: 0px;  /* Positions at the top */
+        width: 959px;  /* Sets width */
+        height: 100%;  /* Sets height to cover full viewport height */
+        display: flex;  /* Uses flexbox layout */
+        justify-content: center;  /* Centers items horizontally */
+        align-items: center;  /* Centers items vertically */
+        background-color: rgba(255, 255, 255, 0.8);  /* Semi-transparent background */
+}
+
+.e17lx80j0 {
+        color: #0a72c2;  /* Sets text color */
+}
+
+.css-znku1x a {
+    color: #fff;
+}
+
+/* CSS for a specific class */
+.css-n25ac0 {
+        border-color: #0a72c2 rgba(10, 10, 10, 0.2) rgba(10, 10, 10, 0.2);  /* Sets border color */
+        height: 50px !important;  /* Sets height and uses !important */
+        width: 50px !important;  /* Sets width and uses !important */
+        border-bottom-width: 6px !important;  /* Sets border bottom width */
+        border-top-width: 6px !important;  /* Sets border top width */
+        border-right-width: 6px !important;  /* Sets border right width */
+        border-left-width: 6px !important;  /* Sets border left width */
+}
+
+/* Responsive Design */
+@media(max-width: 600px) {
+        div#dashboard_data_msg {
+                display:  none;
+        }
+
+        div#dashboard_data p {
+                /* display: none; */
+                font-size: 12px;  /* Reduces font size for smaller screens */
+                padding-left: 10px;  /* Reduces left padding */
+                line-height: 16px;  /* Adjusts line height */
+        }
+        .container {
+                width: 100%;  /* Sets container width to 100% */
+                text-align: center;  /* Centers text */
+                border: 3px solid #6699cc;  /* Adds border */
+                border-radius: 0px;  /* No border radius */
+                padding: 20px 0 0;  /* Adds padding */
+                font-family: Arial, sans-serif;  /* Sets font family */
+                color: #333;  /* Sets text color */
+                background-color: #deeeff;  /* Sets background color */
+                margin: 80px auto;  /* Centers container with auto margins */
+        }
+
+        .container .pr {
+                padding: 0px 0;  /* Removes padding */
+                font-size: 12px;  /* Reduces font size */
+        }
+        .frt p {
+                margin: 0;  /* Removes margin */
+                color: white;  /* Sets text color to white */
+                font-size: 8px;  /* Reduces font size */
+        }
+        .css-1gk2i2l {
+                display: block;  /* Displays the element as block */
+        }
+}
+
+@media (min-width: 600px) and (max-width: 780px) {
+        div#dashboard_data_msg {
+                display:  none;
+        }
+        
+        .container {
+                width: 100%;  /* Sets container width to 100% */
+                text-align: center;  /* Centers text */
+                border: 3px solid #6699cc;  /* Adds border */
+                border-radius: 0px;  /* No border radius */
+                padding: 20px 0 0;  /* Adds padding */
+                font-family: Arial, sans-serif;  /* Sets font family */
+                color: #333;  /* Sets text color */
+                background-color: #deeeff;  /* Sets background color */
+                margin: 80px auto;  /* Centers container with auto margins */
+        }
+
+        .container .pr {
+                padding: 15px 0;  /* Adds padding */
+                font-size: 28px;  /* Increases font size */
+        }
+        .frt p {
+                margin: 0;  /* Removes margin */
+                color: white;  /* Sets text color to white */
+                font-size: 11px;  /* Sets font size */
+        }
+}
+
+
+
+/* ===================================== */
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #000000;
+    
+}
+
+.css-64tehz button,
+.css-1dfdf75 button, .css-1dfdf75 button:focus {
+    width: 100% !important;
+    text-align: left !important;
+    display: block !important;
+    padding: 11px !important;
+    font-weight: 500 !important;
+    background-color: #ffffff !important;
+    border-radius: 6px !important;
+}
+
+
+.css-64tehz button:hover, .css-1dfdf75 button:hover:focus {
+    background-color: #0074c2 !important;
+    color: #fff !important;
+    border-color: #0074c2 !important;
+}
+
+
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #000000;
+    padding: 8px;
+    border-bottom: 2px solid #ddd;
+}
+
+
+.row-widget.stSelectbox label {
+    font-weight: 700;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+}
+
+.stDateInput  label{
+    font-weight: 700;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+}
+
