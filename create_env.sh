@@ -68,15 +68,15 @@ ip = "http://$SERVER_IP"
 
 # API endpoint for fetching general or overall dashboard data.
 # Typically used to display aggregated metrics and performance stats.
-api_end_url = "http://$SERVER_IP:5000/get-data"
+api_end_url = "http://$SERVER_IP:8510/get-data"
 
 # API endpoint for fetching comparative data.
 # Used when comparing metrics between two time periods, campaigns, or agents.
-cmp_api_end_url = "http://$SERVER_IP:5000/get-data-cmp"
+cmp_api_end_url = "http://$SERVER_IP:8510/get-data-cmp"
 
 # API endpoint for retrieving agent-specific data.
 # Includes information like call counts, performance, and activity.
-agent_api_end_url = "http://$SERVER_IP:5000/get-data-agent"
+agent_api_end_url = "http://$SERVER_IP:8510/get-data-agent"
 
 # API endpoint for fetching available campaign names.
 # The response populates dropdown lists or filter menus for campaign selection.
