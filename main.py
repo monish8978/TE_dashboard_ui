@@ -1,5 +1,5 @@
 # Import configuration settings from the 'settings' module
-from settings import camp_api_url, main_log_path, login_url, filter_path, download_csv_row_data, dashboard_reload_time,api_end_url
+from settings import camp_api_url, main_log_path, login_url, filter_path, download_csv_row_data, dashboard_reload_time,api_end_url,logo_url
 from campaign_details_dashboard_main import main as cmp_details_main
 from agent_details_dashboard_main import main as agent_details_main
 
@@ -48,7 +48,7 @@ st.markdown('<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.
 st.markdown(
     f"""
         <div class="test12" id="dashboard_data">
-            <img src="https://stg.c-zentrix.com/images/C-Zentrix-logo-white.png" style="width: 110px;">
+            <img src={logo_url} style="width: 110px;">
         </div>
     """,
     unsafe_allow_html=True,
