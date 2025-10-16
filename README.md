@@ -31,5 +31,5 @@ Clone the repository and run the setup script:
 ```bash
 git clone https://github.com/monish8978/TE_dashboard_ui.git
 cd TE_dashboard_ui
-chmod +x create_env.sh.sh
+chmod +x create_env.sh
 ./create_env.sh
