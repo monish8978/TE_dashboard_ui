@@ -29,7 +29,7 @@ A **Call Center Dashboard** that displays call center metrics and KPIs, enabling
 Clone the repository and run the setup script:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/monish8978/TE_dashboard_ui.git
 cd TE_dashboard_ui
 chmod +x create_env.sh.sh
 ./create_env.sh
