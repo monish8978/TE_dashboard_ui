@@ -1,16 +1,35 @@
-📊 Telephony Dashboard
+# Telephony Dashboard (TE Dashboard)
 
-A Call Center Dashboard that displays call center metrics and KPIs, enabling managers and teams to monitor and optimize performance. The dashboard simplifies analysis by converting complex data into clear, visual insights.
+A **Call Center Dashboard** that displays call center metrics and KPIs, enabling managers and teams to monitor and optimize performance. The dashboard simplifies analysis by converting complex data into clear, visual insights.
 
-🚀 Features
+---
 
-Real-time campaign and agent call analytics
+## 🚀 Features
 
-Daily and yearly computation of call data
+- Real-time campaign and agent call analytics  
+- Daily and yearly computation of call data  
+- CSV data extraction from MySQL for analysis  
+- Interactive dashboard built with **Streamlit**  
+- Modular design with separate layers for **Data**, **Computation**, and **Visualization**
 
-CSV data extraction from MySQL for analysis
+---
 
-Interactive dashboard built with Streamlit
+## 🏗️ Tech Stack
 
-Modular design with separate layers for Data, Computation, and Visualization
+- **Backend:** Python 3.x  
+- **Frontend:** Streamlit  
+- **Database:** MySQL  
+- **Deployment:** CentOS / AlmaLinux, systemd service  
+- **Data Analysis:** Pandas, NumPy  
 
+---
+
+## ⚙️ Installation & Setup
+
+Clone the repository and run the setup script:
+
+```bash
+git clone <repo-url>
+cd TE_dashboard_ui
+chmod +x create_env.sh.sh
+./create_env.sh
