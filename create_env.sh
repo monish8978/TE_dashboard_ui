@@ -1,58 +1,191 @@
 #!/bin/bash
+# ==========================================================
+# 🚀 TE Dashboard Auto Setup Script (CentOS / AlmaLinux)
+# ==========================================================
+set -euo pipefail
 
-# Navigate to the specified directory
-cd /Czentrix/apps/TE_dashboard_ui/
+# -----------------------------
+# Configuration Variables
+# -----------------------------
+APP_DIR="/Czentrix/apps/TE_dashboard_ui"
+VENV_DIR="$APP_DIR/venv"
+PYTHON_PATH="/usr/bin/python3"
+STREAMLIT_DIR="$APP_DIR/.streamlit"
+CONFIG_FILE="$STREAMLIT_DIR/config.toml"
+LOG_DIR="/var/log/czentrix/TE_dashboard"
+SERVICE_NAME="TE-dash"
+SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+HEALTH_CHECK_FILE="$APP_DIR/service_check.py"
+CRON_JOB="*/2 * * * * ${VENV_DIR}/bin/python ${HEALTH_CHECK_FILE}"
+LOG_FILE="/var/log/czentrix/te_dashboard_setup.log"
+SETTINGS_FILE="$APP_DIR/settings.py"
 
-# Store the current directory's virtual environment binary path in a variable
-cdir="$(pwd)/venv/bin/"
+# -----------------------------
+# Logging Setup
+# -----------------------------
+mkdir -p "$(dirname "$LOG_FILE")"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Print the virtual environment directory for debugging purposes
-echo "Virtual environment directory: $cdir"
+# -----------------------------
+# Step 0: Detect Package Manager & Install System Dependencies
+# -----------------------------
+if command -v dnf >/dev/null 2>&1; then
+    PKG_MANAGER="dnf"
+elif command -v yum >/dev/null 2>&1; then
+    PKG_MANAGER="yum"
+else
+    echo "❌ No supported package manager found (dnf/yum)."
+    exit 1
+fi
 
-# Create a virtual environment named 'venv' using Python 3
-echo "Creating virtual environment..."
-python3 -m venv venv
-# Alternatively, create the virtual environment using a specific Python interpreter
-virtualenv venv -p /opt/python3.6.7/bin/python3
-echo "Virtual environment created."
+echo "📦 Installing system packages via $PKG_MANAGER..."
+sudo $PKG_MANAGER install -y python3 python3-virtualenv gcc >/dev/null
+echo "✅ System packages installed."
 
-# Activate the virtual environment
-source venv/bin/activate
+# -----------------------------
+# Step 1: Detect Server IP and Update settings.py
+# -----------------------------
+# Detect server IP automatically
+SERVER_IP=$(hostname -I | awk '{print $1}')
+if [ -z "$SERVER_IP" ]; then
+    SERVER_IP="127.0.0.1"
+fi
+echo "🌐 Using server IP: $SERVER_IP"
 
-# Upgrade pip to the latest version
-pip install --upgrade pip
+# Update settings.py dynamically
+cat <<EOF > "$SETTINGS_FILE"
+# ==========================================================
+# 🌐 Server and API Configuration
+# ==========================================================
+ip = "http://$SERVER_IP"
+api_end_url = "http://$SERVER_IP:5000/get-data"
+cmp_api_end_url = "http://$SERVER_IP:5000/get-data-cmp"
+agent_api_end_url = "http://$SERVER_IP:5000/get-data-agent"
+camp_api_url = "http://$SERVER_IP/apps/czAppHandler.php"
+login_url = ip + "/"
 
-# Install the required packages listed in requirements.txt
-echo "Installing requirements..."
-pip install -r requirements.txt
-echo "Requirements installed."
+# ==========================================================
+# 📁 Log File Paths
+# ==========================================================
+main_log_path = "/var/log/czentrix/TE_dashboard/main.log"
+log_path_check_service_ui = "/var/log/czentrix/TE_dashboard/service_check_ui.log"
 
-# Define the directory path and file name for the Streamlit configuration
-directory="/Czentrix/apps/TE_dashboard_ui/.streamlit"
-filename="config.toml"
+# ==========================================================
+# 📂 Directory Paths for Data and Filters
+# ==========================================================
+filter_path = "/var/log/czentrix/TE_dashboard/filter/"
+download_csv_row_data = "/var/log/czentrix/TE_dashboard/download_csv_row_data/hitorical_data/"
+# download_csv_live_current_row_data = "/var/log/czentrix/TE_dashboard/download_csv_row_data/live_data/"
 
-# Create the directory if it doesn't exist
-mkdir -p "$directory"
+logo_url = "https://www.c-zentrix.com/images/C-Zentrix-logo-white.png"
 
-# Define the path for the main data directory
-main_data_path_dit='/var/log/czentrix/TE_dashboard/'
+# ==========================================================
+# 📊 Dashboard Settings
+# ==========================================================
+dashboard_names_list = ["Telephony Dashboard", "Campaign Details Dashboard"]
+SERVICE_NAME = "TE-dash"
+dashboard_reload_time = 50000
+EOF
+echo "✅ settings.py updated with server IP"
 
-# Create the main data directory if it doesn't exist
-mkdir -p "$main_data_path_dit"
+# -----------------------------
+# Step 2: Navigate to project directory
+# -----------------------------
+cd "$APP_DIR" || { echo "❌ Application directory $APP_DIR not found"; exit 1; }
+echo "📂 Working directory: $(pwd)"
 
-# Define the content of the config.toml file
-config_content="[theme]
-base=\"light\"
-textColor=\"#0a0a0a\"
+# -----------------------------
+# Step 3: Virtual Environment
+# -----------------------------
+echo "🐍 Setting up Python virtual environment..."
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv "$VENV_DIR" || virtualenv "$VENV_DIR" -p "$PYTHON_PATH"
+    echo "✅ Virtual environment created."
+else
+    echo "🔄 Virtual environment exists. Reusing."
+fi
+source "$VENV_DIR/bin/activate"
+pip install --upgrade pip >/dev/null
+echo "✅ Pip upgraded."
+
+# -----------------------------
+# Step 4: Python Dependencies
+# -----------------------------
+if [ -f "requirements.txt" ]; then
+    echo "📦 Installing dependencies..."
+    pip install -r requirements.txt >/dev/null
+    echo "✅ Dependencies installed."
+else
+    echo "⚠️  requirements.txt not found. Skipping."
+fi
+
+# -----------------------------
+# Step 5: Streamlit Configuration
+# -----------------------------
+mkdir -p "$STREAMLIT_DIR" "$LOG_DIR"
+cat > "$CONFIG_FILE" <<EOL
+[theme]
+base="light"
+textColor="#0a0a0a"
 
 [server]
 port = 8511
-"
+EOL
+echo "✅ Streamlit config created at $CONFIG_FILE"
 
-# Write the content to the config.toml file
-echo "$config_content" > "$directory/$filename"
+# -----------------------------
+# Step 6: Systemd Service
+# -----------------------------
+echo "🧠 Configuring systemd service $SERVICE_NAME..."
+if [ -f "$SERVICE_FILE" ]; then
+    if systemctl is-active --quiet "$SERVICE_NAME"; then
+        sudo systemctl restart "$SERVICE_NAME"
+        echo "🔄 Service restarted."
+    else
+        sudo systemctl start "$SERVICE_NAME"
+        echo "🟡 Service started."
+    fi
+else
+    sudo tee "$SERVICE_FILE" >/dev/null <<EOL
+[Unit]
+Description=Telephony Dashboard Service
+After=network.target
 
-# Confirm that the config.toml file has been created successfully
-echo "Config.toml file has been created successfully."
+[Service]
+WorkingDirectory=$APP_DIR
+ExecStart=$VENV_DIR/bin/uvicorn app:app --host 0.0.0.0 --port 8511 --workers 4
+Restart=always
+RestartSec=5
+Environment="PATH=$VENV_DIR/bin:$PATH"
 
+[Install]
+WantedBy=multi-user.target
+EOL
+    sudo chmod 644 "$SERVICE_FILE"
+    sudo systemctl daemon-reload
+    sudo systemctl enable "$SERVICE_NAME"
+    sudo systemctl restart "$SERVICE_NAME"
+    echo "✅ Service created and started."
+fi
 
+# -----------------------------
+# Step 7: Cron Job for Health Check
+# -----------------------------
+if crontab -l 2>/dev/null | grep -Fq "$CRON_JOB"; then
+    echo "🕒 Cron job exists."
+else
+    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+    echo "✅ Cron job added."
+fi
+
+# -----------------------------
+# Setup Completed
+# -----------------------------
+echo "=========================================================="
+echo "🎉 TE Dashboard setup completed!"
+echo "Service      : $SERVICE_NAME"
+echo "Port         : 8511"
+echo "Log Directory: $LOG_DIR"
+echo "Cron Job     : Every 2 minutes"
+echo "Setup Log    : $LOG_FILE"
+echo "=========================================================="
