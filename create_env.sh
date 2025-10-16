@@ -207,11 +207,11 @@ Description=Telephony Dashboard Service
 After=network.target
 
 [Service]
-WorkingDirectory=$APP_DIR
-ExecStart=$VENV_DIR/bin/uvicorn app:app --host 0.0.0.0 --port 8511 --workers 4
+WorkingDirectory=/Czentrix/apps/TE_dashboard_ui
+ExecStart=/Czentrix/apps/TE_dashboard_ui/venv/bin/python app.py
 Restart=always
 RestartSec=5
-Environment="PATH=$VENV_DIR/bin:$PATH"
+Environment="PATH=/Czentrix/apps/TE_dashboard_ui/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 
 [Install]
 WantedBy=multi-user.target
