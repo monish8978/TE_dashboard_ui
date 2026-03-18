@@ -2831,9 +2831,9 @@ async def chat_process(req: Request):
 
             # create_loan_details_pdf(loan_rows, file_path)
 
-            # pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-            # # print(pdf_url,"pdf_url")
-            # tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
+            pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
+            # print(pdf_url,"pdf_url")
+            tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
 
             if loan_data["operationStatus"] != "1":
                 res = get_all_loan("8076893187")
