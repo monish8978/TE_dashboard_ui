@@ -2826,16 +2826,16 @@ async def chat_process(req: Request):
         if msg == "Existing Customer":
             filename = "existing-loan-details-8076893187.pdf"
             file_path = f"{PDF_STORAGE_PATH}/{filename}"
-            loan_data = get_loan_details("8076893187")
-            loan_rows = extract_loan_details(loan_data)
+            # loan_data = get_loan_details("8076893187")
+            # loan_rows = extract_loan_details(loan_data)
 
-            create_loan_details_pdf(loan_rows, file_path)
+            # create_loan_details_pdf(loan_rows, file_path)
 
-            pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-            # print(pdf_url,"pdf_url")
-            tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
+            # pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
+            # # print(pdf_url,"pdf_url")
+            # tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
 
-            if loan_data["operationStatus"] == "1":
+            if loan_data["operationStatus"] != "1":
                 res = get_all_loan("8076893187")
                 reply_text,customerName = format_loans_for_whatsapp(res)
                 save_user(wa, {"step": "EC_LOAN"})
