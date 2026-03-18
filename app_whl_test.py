@@ -770,9 +770,9 @@ def send_cibil_pdf_whatsapp(to, pdf_url,filename):
         "tag": "BotTvt",
         "licenseId": "a21c1b4e8c44ced0d7aa67ffb203db34",
         "api_type": "pinnacle",
-        "media_url": "https://omnichat.c-zentrix.com//chatadmin/uploaded_files/2_741773769915996_1773770005_1_701773445495117_1773445670_2_791773043572657_1773043590_WhatsApp_Image_2026_03_03_at_11.17.06_AM.jpeg",
-        "messageBody": "1_701773445495117_1773445670_2_791773043572657_1773043590_WhatsApp_Image_2026_03_03_at_11.17.06_AM.jpeg",
-        "mime_type": "image/jpeg"
+        "media_url": pdf_url,
+        "messageBody": filename,
+        "mime_type": "application/pdf"
     }
     # url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
 
@@ -2832,8 +2832,9 @@ async def chat_process(req: Request):
             # create_loan_details_pdf(loan_rows, file_path)
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-            # print(pdf_url,"pdf_url")
+            print(pdf_url,"pdf_url")
             tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
+            print(tmp_data,"++++++++++++++++++++++++++++")
 
             if loan_data["operationStatus"] != "1":
                 res = get_all_loan("8076893187")
