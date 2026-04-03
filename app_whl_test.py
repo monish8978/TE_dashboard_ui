@@ -4947,13 +4947,13 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                    {
+                        "type": "Action.Submit",
+                        "title": "Submit",
+                        "id": "crmSubmitForm",
+                        "value": "Submit",
+                        "actionId": "7777.70007"
+                    }
             ]
             }
             return payload
@@ -4964,6 +4964,28 @@ async def chat_process(req: Request):
                     {
                         "type": "TextBlock",
                         "text": "We are unable to fetch your Repayment Schedule at the moment due to a system authentication issue. Please try again after some time or contact customer support for assistance."
+                    },
+                    {
+                        "type": "Button",
+                        "id": "interestcertificate",
+                        "style": "expanded",
+                        "choices": [
+                            {
+                                "id": "Customer Support",
+                                "title": "Customer Support",
+                                "value": "Customer Support"
+                            },
+                            {
+                                "id": "Back To Menu",
+                                "title": "Back To Menu",
+                                "value": "Back To Menu"
+                            },
+                            {
+                                "id": "Main Menu",
+                                "title": "Main Menu",
+                                "value": "Main Menu"
+                            }
+                        ]
                     }
                 ],
                 "actions": [
