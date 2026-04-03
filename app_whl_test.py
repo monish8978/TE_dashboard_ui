@@ -326,12 +326,12 @@ def download_welcome_letter(loan_number):
 
 def send_whatsapp_cta_template(to_number,template_name):
     url = "https://partnersV1.pinbot.ai/v3/742406742288776/messages"
-    
+
     headers = {
         "apikey": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
         "Content-Type": "application/json"
     }
-    
+
     payload = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
@@ -344,15 +344,15 @@ def send_whatsapp_cta_template(to_number,template_name):
             }
         }
     }
-    
+
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
-        
+
         print("Status Code:", response.status_code)
         print("Response:", response.text)
-        
+
         return response.json()
-    
+
     except Exception as e:
         return {
             "status": False,
@@ -1669,18 +1669,14 @@ async def chat_process(req: Request):
                     "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
                 },
                 {
-                    "type": "TextBlock",
-                    "text": "Tap the Visit Website button below to view the branch nearest to your location."
-                },
-                {
                     "type": "Button",
                     "id": "serviceType",
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Visit website",
-                            "title": "Visit website",
-                            "value": "Visit website"
+                            "id": "Contact Us",
+                            "title": "Contact Us",
+                            "value": "Contact Us"
                         },
                         {
                             "id": "Back To Menu",
@@ -2925,9 +2921,10 @@ async def chat_process(req: Request):
         if msg == "Branch Locator":
             reset_flow(wa)
             data = send_whatsapp_cta_template(
-                mobile_no="917533941271",
-                template_name="omaza_demo"
+                "917533941271",
+                "omaza_demo"
             )
+            time.sleep(1)
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -3909,9 +3906,10 @@ async def chat_process(req: Request):
     if step == "EC_MENU" and msg == "Branch Locator":
         save_user(wa, {"step": "MAIN_MENU"})
         data = send_whatsapp_cta_template(
-            mobile_no="917533941271",
-            template_name="omaza_demo"
+            "917533941271",
+            "omaza_demo"
         )
+        time.sleep(1)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4137,6 +4135,49 @@ async def chat_process(req: Request):
         }
         return payload
 
+    if step == "NEW_LOAN_MENU" and msg == "Contact Us":
+        save_user(wa, {"step": "Contact_Us"})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "📞 Call us at 1800-102-1002\n📧 Email us at hello@wonderhfl.com\n\nOur team will be happy to help you."
+                },
+                {
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Submit",
+                    "id": "crmSubmitForm",
+                    "value": "Submit",
+                    "actionId": "7777.70007"
+                }
+            ]
+        }
+        return payload
 
 
     if step == "SUPPPORT_ISSUE" and msg == "Contact Us":
@@ -4383,15 +4424,7 @@ async def chat_process(req: Request):
 
 
     if msg == "Install WHFL App" and step == "EC_MENU":
-
-        # send_text_template(wa, TEMPLATE_BRANCH_LOCATOR_LINK)
-        # send_text_template(wa, docmenutemplatelistmenu)
-        # send_text_template(wa, returntomenu)
         save_user(wa, {"step": "EC_LOAN"})
-        # return {
-        #     "reply": "Install WHFL App",
-        #     "flag": True
-        # }
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4400,18 +4433,14 @@ async def chat_process(req: Request):
                     "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
                 },
                 {
-                    "type": "TextBlock",
-                    "text": "Tap the button below to install the WHFL Customer App."
-                },
-                {
                     "type": "Button",
                     "id": "serviceType",
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Install WHFL App",
-                            "title": "Install WHFL App",
-                            "value": "Install WHFL App"
+                            "id": "Contact Us",
+                            "title": "Contact Us",
+                            "value": "Contact Us"
                         },
                         {
                             "id": "Back To Menu",
