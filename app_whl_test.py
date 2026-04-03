@@ -1665,6 +1665,7 @@ async def chat_process(req: Request):
             "917533941271",
             "omaza_demo"
         )
+        time.sleep(1)
         payload = {
             "type": "adaptiveCard",
             "body": [
