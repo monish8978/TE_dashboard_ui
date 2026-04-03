@@ -4856,6 +4856,7 @@ async def chat_process(req: Request):
 
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=Interest_Certificate_LN29003HP22-23010778.pdf"
         tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
+        time.sleep(2)
         # delete_pdf_file("Interest_Certificate_LN29003HP22-23010778.pdf")
 
         save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
@@ -4910,11 +4911,11 @@ async def chat_process(req: Request):
             create_emi_pdf("LN29003HP22-23010778", emi_rows, file_path)
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=EMI_Schedule_LN29003HP22-23010778.pdf"
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"EMI_Schedule_LN29003HP22-23010778.pdf")
-            # print(tmp_data,"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
+            
             # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
-            # send_text_template(wa, returntomenu)
+            
             save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
-            # return {"reply": "Repayment Schedule", "flag": True}
+            time.sleep(2)
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -4981,11 +4982,11 @@ async def chat_process(req: Request):
         download_welcome_letter("LN29003HP22-23010778")
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=welcome_letter_LN29003HP22-23010778.pdf"
         tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"welcome_letter_LN29003HP22-23010778.pdf")
-        # print(tmp_data,"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
+        
         # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
-        # send_text_template(wa, returntomenu)
+        
         save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
-        # return {"reply": "welcome_letter", "flag": True}
+        time.sleep(2)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -5031,7 +5032,6 @@ async def chat_process(req: Request):
 
     if existing_mobile:
         if msg == "English" or msg == "english":
-            # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
 
             save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
             payload = {
