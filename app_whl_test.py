@@ -4135,6 +4135,51 @@ async def chat_process(req: Request):
         }
         return payload
 
+    if step == "EC_LOAN" and msg == "Contact Us":
+        save_user(wa, {"step": "Contact_Us"})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "📞 Call us at 1800-102-1002\n📧 Email us at hello@wonderhfl.com\n\nOur team will be happy to help you."
+                },
+                {
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Submit",
+                    "id": "crmSubmitForm",
+                    "value": "Submit",
+                    "actionId": "7777.70007"
+                }
+            ]
+        }
+        return payload
+
+
     if step == "NEW_LOAN_MENU" and msg == "Contact Us":
         save_user(wa, {"step": "Contact_Us"})
         payload = {
