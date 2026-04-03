@@ -4424,6 +4424,7 @@ async def chat_process(req: Request):
             "917533941271",
             "omaza_demo"
         )
+        time.sleep(1)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4474,6 +4475,7 @@ async def chat_process(req: Request):
             "917533941271",
             "omaza_demo"
         )
+        time.sleep(1)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -5147,7 +5149,7 @@ async def exist_number(req: Request):
             "exists": True,
             "data": {
                 "wa": existing_user.get("wa"),
-                "step": existing_user.get("step"),   
+                "step": existing_user.get("step"),   # ✅ step yaha se aa raha hai
                 "mobile": existing_user.get("mobile"),
                 "name": existing_user.get("name")
             }
