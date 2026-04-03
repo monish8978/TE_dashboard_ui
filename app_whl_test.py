@@ -324,54 +324,89 @@ def download_welcome_letter(loan_number):
     }
 
 
-
-def send_whatsapp_cta_template(
-        mobile_no: str,
-        template_name: str,
-        message_body: list,
-        license_id: str,
-        language_code: str = "en",
-        api_type: str = "aisensy"
-):
-    """
-    Send WhatsApp CTA Template Message
-    """
-
-    url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
-
-    payload = {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
-        "mobile_no": mobile_no,
-        "api_type": api_type,
-        "type": "template",
-        "template_name": template_name,
-        "languageCode": language_code,
-        "messageBody": message_body,
-        "licenseId": license_id
-    }
-
+def send_whatsapp_cta_template(to_number,template_name):
+    url = "https://partnersV1.pinbot.ai/v3/742406742288776/messages"
+    
     headers = {
+        "apikey": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
         "Content-Type": "application/json"
     }
-
-    try:
-        response = requests.post(
-            url,
-            headers=headers,
-            data=json.dumps(payload),
-            timeout=30
-        )
-
-        return {
-            "status_code": response.status_code,
-            "response": response.json()
+    
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": to_number,
+        "type": "template",
+        "template": {
+            "name": template_name,
+            "language": {
+                "code": "en"
+            }
         }
-
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+        
+        return response.json()
+    
     except Exception as e:
         return {
             "status": False,
             "error": str(e)
         }
+
+
+# def send_whatsapp_cta_template(
+#         mobile_no: str,
+#         template_name: str,
+#         message_body: list,
+#         license_id: str,
+#         language_code: str = "en",
+#         api_type: str = "aisensy"
+# ):
+#     """
+#     Send WhatsApp CTA Template Message
+#     """
+
+#     url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
+
+#     payload = {
+#         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
+#         "mobile_no": mobile_no,
+#         "api_type": api_type,
+#         "type": "template",
+#         "template_name": template_name,
+#         "languageCode": language_code,
+#         "messageBody": message_body,
+#         "licenseId": license_id
+#     }
+
+#     headers = {
+#         "Content-Type": "application/json"
+#     }
+
+#     try:
+#         response = requests.post(
+#             url,
+#             headers=headers,
+#             data=json.dumps(payload),
+#             timeout=30
+#         )
+
+#         return {
+#             "status_code": response.status_code,
+#             "response": response.json()
+#         }
+
+#     except Exception as e:
+#         return {
+#             "status": False,
+#             "error": str(e)
+#         }
 
 
 
@@ -760,33 +795,19 @@ def send_text_template_with_header_variables(to, template, header_name, body_nam
 
 
 def send_cibil_pdf_whatsapp(to, pdf_url,filename):
-    url = "https://omniqa.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
+    url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
+
     payload = {
-        "token": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
-        "auth_token": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
-        "accountId": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
-        "mobile_no": "917753803306",
-        "type": "image",
-        "tag": "BotTvt",
-        "licenseId": "a21c1b4e8c44ced0d7aa67ffb203db34",
-        "api_type": "pinnacle",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
+        "mobile_no": to,
+        "type": "document",
+        "tag": "OTVT",
+        "licenseId": "8e2a733c2796c6367e838fff6191b74d",
+        "api_type": "aisensy",
         "media_url": pdf_url,
         "messageBody": filename,
         "mime_type": "application/pdf"
     }
-    # url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
-
-    # payload = {
-    #     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
-    #     "mobile_no": to,
-    #     "type": "document",
-    #     "tag": "OTVT",
-    #     "licenseId": "8e2a733c2796c6367e838fff6191b74d",
-    #     "api_type": "aisensy",
-    #     "media_url": pdf_url,
-    #     "messageBody": filename,
-    #     "mime_type": "application/pdf"
-    # }
 
     headers = {
         "Content-Type": "application/json"
@@ -2826,17 +2847,21 @@ async def chat_process(req: Request):
         if msg == "Existing Customer":
             filename = "existing-loan-details-8076893187.pdf"
             file_path = f"{PDF_STORAGE_PATH}/{filename}"
-            # loan_data = get_loan_details("8076893187")
-            # loan_rows = extract_loan_details(loan_data)
+            #loan_data = get_loan_details("8076893187")
+            #loan_rows = extract_loan_details(loan_data)
 
-            # create_loan_details_pdf(loan_rows, file_path)
+            #create_loan_details_pdf(loan_rows, file_path)
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
             print(pdf_url,"pdf_url")
             tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
-            print(tmp_data,"++++++++++++++++++++++++++++")
+            print(tmp_data,"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            loan_data = {
+                    "operationStatus": "1"
 
-            if loan_data["operationStatus"] != "1":
+                    }
+
+            if loan_data["operationStatus"] == "1":
                 res = get_all_loan("8076893187")
                 reply_text,customerName = format_loans_for_whatsapp(res)
                 save_user(wa, {"step": "EC_LOAN"})
@@ -2901,9 +2926,7 @@ async def chat_process(req: Request):
             reset_flow(wa)
             data = send_whatsapp_cta_template(
                 mobile_no="917533941271",
-                template_name="branch_locator_v3",
-                message_body=["Monish"],
-                license_id="8e2a733c2796c6367e838fff6191b74d"
+                template_name="omaza_demo"
             )
             payload = {
                 "type": "adaptiveCard",
@@ -3490,11 +3513,13 @@ async def chat_process(req: Request):
             msg = json.loads(msg)
 
         pan = msg.get("screen_0_Enter_Pan_No_1")
-
+        print(pan,"+++++++++++++++++++++++++++++++++++")
         response = verify_pan(pan)
+        print(response,"")
         status_code = response.get("status-code")
         if status_code == "101":
             user_data = get_user(wa)
+            print(user_data,"11111111111111111111111111111")
             access_token = generate_transunion_token()
             document_id,ApplicantLastName,PanNumber = submit_cibil_application(access_token)
             cibil_report = "cibil_report_" + ApplicantLastName + "_" + PanNumber +".pdf"
@@ -3885,9 +3910,7 @@ async def chat_process(req: Request):
         save_user(wa, {"step": "MAIN_MENU"})
         data = send_whatsapp_cta_template(
             mobile_no="917533941271",
-            template_name="branch_locator_v3",
-            message_body=["Monish"],
-            license_id="8e2a733c2796c6367e838fff6191b74d"
+            template_name="omaza_demo"
         )
         payload = {
             "type": "adaptiveCard",
@@ -4642,7 +4665,7 @@ async def chat_process(req: Request):
                     }
                 ]
             }
-           
+
             return payload
         else:
             # send_text_template(wa, EXISTING_LOAN_NUMBER_NOT_VALID)
@@ -5057,5 +5080,4 @@ async def exist_number(req: Request):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=9010)
-
 
