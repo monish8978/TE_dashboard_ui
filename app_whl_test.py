@@ -699,7 +699,7 @@ def send_whatsapp_flow_message(phone_number: str, flow_token: str):
     Send WhatsApp template message with Flow button
 
     Args:
-        phone_number (str): Recipient phone number with country code (e.g., 917533941271)
+        phone_number (str): Recipient phone number with country code (e.g., 917533943345)
         flow_token (str): Flow token for the WhatsApp flow
     """
 
@@ -1288,7 +1288,7 @@ async def chat_process(req: Request):
     msg = body.get("message", "").strip()
     extraParms = body.get("extraParms")
     csid_data = json.loads(extraParms)
-    wa = csid_data.get("csid")
+    wa = csid_data.get("identifier")
     cmd = msg.upper()
 
     # -------- GLOBAL COMMANDS --------
@@ -1676,7 +1676,7 @@ async def chat_process(req: Request):
 
     if msg == "Calculators" and step == "NEW_LOAN_MENU":
         data = send_whatsapp_cta_template(
-            "917533941271",
+            wa,
             "calculators"
         )
         time.sleep(1)
@@ -2867,7 +2867,7 @@ async def chat_process(req: Request):
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
             # print(pdf_url,"pdf_url")
-            tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
+            tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,filename)
             # print(tmp_data,"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
             loan_data = {
                     "operationStatus": "1"
@@ -2938,7 +2938,7 @@ async def chat_process(req: Request):
         if msg == "Branch Locator":
             reset_flow(wa)
             data = send_whatsapp_cta_template(
-                "917533941271",
+                wa,
                 "branchlocator"
             )
             time.sleep(1)
@@ -3539,7 +3539,7 @@ async def chat_process(req: Request):
             cibil_report = "cibil_report_" + ApplicantLastName + "_" + PanNumber +".pdf"
             fetch_transunion_report_pdf(document_id,access_token,cibil_report)
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={cibil_report}"
-            tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,cibil_report)
+            tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,cibil_report)
 
             lead_payload = {
                 "name": user_data.get("name"),
@@ -3604,7 +3604,7 @@ async def chat_process(req: Request):
             return payload
         else:
             result = send_whatsapp_flow_message(
-                phone_number="917533941271",
+                phone_number=wa,
                 flow_token="123"
             )
             save_user(wa, {"name": msg, "step": "NP_FLOW"})
@@ -3874,7 +3874,7 @@ async def chat_process(req: Request):
 
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
         # print(pdf_url,"pdf_url")
-        tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
+        tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,filename)
         res = get_all_loan("8076893187")
         reply_text,customerName = format_loans_for_whatsapp(res)
         save_user(wa, {"tmp_step": "MY_LOAN"})
@@ -3923,7 +3923,7 @@ async def chat_process(req: Request):
     if step == "EC_MENU" and msg == "Branch Locator":
         save_user(wa, {"step": "MAIN_MENU"})
         data = send_whatsapp_cta_template(
-            "917533941271",
+            wa,
             "branchlocator"
         )
         time.sleep(1)
@@ -4436,7 +4436,7 @@ async def chat_process(req: Request):
     if msg == "Pay EMI Now" and step == "EC_MENU":
         save_user(wa, {"step": "EC_LOAN"})
         data = send_whatsapp_cta_template(
-            "917533941271",
+            wa,
             "payemi"
         )
         time.sleep(1)
@@ -4487,7 +4487,7 @@ async def chat_process(req: Request):
     if msg == "Install WHFL App" and step == "EC_MENU":
         save_user(wa, {"step": "EC_LOAN"})
         data = send_whatsapp_cta_template(
-            "917533941271",
+            wa,
             "whfl_app"
         )
         time.sleep(1)
@@ -4805,7 +4805,7 @@ async def chat_process(req: Request):
 
     if step == "DOC_MENU" and msg == "Mini SOA":
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=cibil_report_BANSAL_DVWPB4941P.pdf"
-        tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
+        tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
         # send_text_template(wa, returntomenu)
         save_user(wa, {"step": "DOC_MENU"})
         # return {"reply": "Mini SOA", "flag": True}
@@ -4855,7 +4855,7 @@ async def chat_process(req: Request):
         data = download_interest_certificate("LN29003HP22-23010778", "01-04-2024", "31-03-2025")
 
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=Interest_Certificate_LN29003HP22-23010778.pdf"
-        tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
+        tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
         # delete_pdf_file("Interest_Certificate_LN29003HP22-23010778.pdf")
 
         save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
@@ -4909,7 +4909,7 @@ async def chat_process(req: Request):
             file_path = f"{PDF_STORAGE_PATH}/EMI_Schedule_LN29003HP22-23010778.pdf"
             create_emi_pdf("LN29003HP22-23010778", emi_rows, file_path)
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=EMI_Schedule_LN29003HP22-23010778.pdf"
-            tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,"EMI_Schedule_LN29003HP22-23010778.pdf")
+            tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"EMI_Schedule_LN29003HP22-23010778.pdf")
             # print(tmp_data,"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
             # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
             # send_text_template(wa, returntomenu)
@@ -4980,7 +4980,7 @@ async def chat_process(req: Request):
     if step == "DOC_MENU" and msg == "Welcome Letter":
         download_welcome_letter("LN29003HP22-23010778")
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=welcome_letter_LN29003HP22-23010778.pdf"
-        tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,"welcome_letter_LN29003HP22-23010778.pdf")
+        tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"welcome_letter_LN29003HP22-23010778.pdf")
         # print(tmp_data,"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
         # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
         # send_text_template(wa, returntomenu)
