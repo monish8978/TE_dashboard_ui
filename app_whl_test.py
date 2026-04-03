@@ -1663,7 +1663,7 @@ async def chat_process(req: Request):
     if msg == "Calculators" and step == "NEW_LOAN_MENU":
         data = send_whatsapp_cta_template(
             "917533941271",
-            "omaza_demo"
+            "calculators"
         )
         time.sleep(1)
         payload = {
@@ -2925,7 +2925,7 @@ async def chat_process(req: Request):
             reset_flow(wa)
             data = send_whatsapp_cta_template(
                 "917533941271",
-                "omaza_demo"
+                "branchlocator"
             )
             time.sleep(1)
             payload = {
@@ -3910,7 +3910,7 @@ async def chat_process(req: Request):
         save_user(wa, {"step": "MAIN_MENU"})
         data = send_whatsapp_cta_template(
             "917533941271",
-            "omaza_demo"
+            "branchlocator"
         )
         time.sleep(1)
         payload = {
@@ -4423,7 +4423,7 @@ async def chat_process(req: Request):
         save_user(wa, {"step": "EC_LOAN"})
         data = send_whatsapp_cta_template(
             "917533941271",
-            "omaza_demo"
+            "payemi"
         )
         time.sleep(1)
         payload = {
@@ -4474,7 +4474,7 @@ async def chat_process(req: Request):
         save_user(wa, {"step": "EC_LOAN"})
         data = send_whatsapp_cta_template(
             "917533941271",
-            "omaza_demo"
+            "whfl_app"
         )
         time.sleep(1)
         payload = {
