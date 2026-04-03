@@ -795,15 +795,29 @@ def send_text_template_with_header_variables(to, template, header_name, body_nam
 
 
 def send_cibil_pdf_whatsapp(to, pdf_url,filename):
-    url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
+    url = "https://omniqa.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
+
+    # payload = {
+    #     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
+    #     "mobile_no": to,
+    #     "type": "document",
+    #     "tag": "OTVT",
+    #     "licenseId": "8e2a733c2796c6367e838fff6191b74d",
+    #     "api_type": "aisensy",
+    #     "media_url": pdf_url,
+    #     "messageBody": filename,
+    #     "mime_type": "application/pdf"
+    # }
 
     payload = {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
+        "token": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
+        "auth_token": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
+        "accountId": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
         "mobile_no": to,
         "type": "document",
-        "tag": "OTVT",
-        "licenseId": "8e2a733c2796c6367e838fff6191b74d",
-        "api_type": "aisensy",
+        "tag": "BotTvt",
+        "licenseId": "a21c1b4e8c44ced0d7aa67ffb203db34",
+        "api_type": "pinnacle",
         "media_url": pdf_url,
         "messageBody": filename,
         "mime_type": "application/pdf"
@@ -5150,7 +5164,7 @@ async def exist_number(req: Request):
             "exists": True,
             "data": {
                 "wa": existing_user.get("wa"),
-                "step": existing_user.get("step"),   # ✅ step yaha se aa raha hai
+                "step": existing_user.get("step"),
                 "mobile": existing_user.get("mobile"),
                 "name": existing_user.get("name")
             }
