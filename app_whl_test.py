@@ -1661,6 +1661,10 @@ async def chat_process(req: Request):
 
 
     if msg == "Calculators" and step == "NEW_LOAN_MENU":
+        data = send_whatsapp_cta_template(
+            "917533941271",
+            "omaza_demo"
+        )
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -1705,8 +1709,6 @@ async def chat_process(req: Request):
 
 
     if msg == "Track Loan Status" and step == "NEW_LOAN_MENU":
-        # send_text_template(wa, TEMPLATE_BRANCH_LOCATOR_LINK)
-        # send_text_template(wa, returntomenu)
         reset_flow(wa)
         payload = {
             "type": "adaptiveCard",
@@ -4417,20 +4419,17 @@ async def chat_process(req: Request):
 
 
     if msg == "Pay EMI Now" and step == "EC_MENU":
-        # send_text_template(wa, docmenutemplatelistmenu)
-        # send_text_template(wa, returntomenu)
         save_user(wa, {"step": "EC_LOAN"})
-        # reset_flow(wa)
-        # return {
-        #     "reply": "Pay EMI Now",
-        #     "flag": False
-        # }
+        data = send_whatsapp_cta_template(
+            "917533941271",
+            "omaza_demo"
+        )
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": "Kindly choose one of the options below to continue with your EMI payment."
+                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
                 },
                 {
                     "type": "Button",
@@ -4438,9 +4437,9 @@ async def chat_process(req: Request):
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Pay EMI Now",
-                            "title": "Pay EMI Now",
-                            "value": "Pay EMI Now"
+                            "id": "Contact Us",
+                            "title": "Contact Us",
+                            "value": "Contact Us"
                         },
                         {
                             "id": "Back To Menu",
@@ -4471,6 +4470,10 @@ async def chat_process(req: Request):
 
     if msg == "Install WHFL App" and step == "EC_MENU":
         save_user(wa, {"step": "EC_LOAN"})
+        data = send_whatsapp_cta_template(
+            "917533941271",
+            "omaza_demo"
+        )
         payload = {
             "type": "adaptiveCard",
             "body": [
