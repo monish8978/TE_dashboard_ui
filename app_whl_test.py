@@ -348,8 +348,8 @@ def send_whatsapp_cta_template(to_number,template_name):
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-        print("Status Code:", response.status_code)
-        print("Response:", response.text)
+        # print("Status Code:", response.status_code)
+        # print("Response:", response.text)
 
         return response.json()
 
@@ -815,8 +815,8 @@ def send_cibil_pdf_whatsapp(to, pdf_url,filename):
 
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
-        print("Status Code:", response.status_code)
-        print("Response:", response.text)
+        # print("Status Code:", response.status_code)
+        # print("Response:", response.text)
         return response.json()
     except Exception as e:
         print("Error:", str(e))
@@ -1369,10 +1369,10 @@ async def chat_process(req: Request):
         tmp_step = user["tmp_step"]
     except:
         tmp_step = ""
-    print(user,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
-    print(msg,"mmmmmmmmmmmmmmmmmmmmm")
-    print(step,"ssssssssssssssssssss")
-    print(tmp_step,"tttttttttttttttttmmmmmmmmmmppppppppp")
+    # print(user,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+    # print(msg,"mmmmmmmmmmmmmmmmmmmmm")
+    # print(step,"ssssssssssssssssssss")
+    # print(tmp_step,"tttttttttttttttttmmmmmmmmmmppppppppp")
 
     existing_mobile = user.get("mobile") if user else None
 
@@ -2851,9 +2851,9 @@ async def chat_process(req: Request):
             #create_loan_details_pdf(loan_rows, file_path)
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-            print(pdf_url,"pdf_url")
+            # print(pdf_url,"pdf_url")
             tmp_data = send_cibil_pdf_whatsapp("917533941271", pdf_url,filename)
-            print(tmp_data,"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            # print(tmp_data,"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
             loan_data = {
                     "operationStatus": "1"
 
@@ -3512,13 +3512,13 @@ async def chat_process(req: Request):
             msg = json.loads(msg)
 
         pan = msg.get("screen_0_Enter_Pan_No_1")
-        print(pan,"+++++++++++++++++++++++++++++++++++")
+        # print(pan,"+++++++++++++++++++++++++++++++++++")
         response = verify_pan(pan)
-        print(response,"")
+        # print(response,"")
         status_code = response.get("status-code")
         if status_code == "101":
             user_data = get_user(wa)
-            print(user_data,"11111111111111111111111111111")
+            # print(user_data,"11111111111111111111111111111")
             access_token = generate_transunion_token()
             document_id,ApplicantLastName,PanNumber = submit_cibil_application(access_token)
             cibil_report = "cibil_report_" + ApplicantLastName + "_" + PanNumber +".pdf"
@@ -5147,7 +5147,7 @@ async def exist_number(req: Request):
             "exists": True,
             "data": {
                 "wa": existing_user.get("wa"),
-                "step": existing_user.get("step"),   # ✅ step yaha se aa raha hai
+                "step": existing_user.get("step"),   
                 "mobile": existing_user.get("mobile"),
                 "name": existing_user.get("name")
             }
