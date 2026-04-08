@@ -14,9 +14,6 @@ import pdfkit
 import base64
 import os
 import time
-import asyncio
-import re
-
 
 app = FastAPI()
 
@@ -204,11 +201,9 @@ def normalize(text):
 
 def check_critical_issue(msg):
     msg_norm = normalize(msg)
-    # print(msg_norm,"llllllllllllllllllllllpppppppppppppppppppp")
     for wa_text, internal_issue in CRITICAL_ISSUE_MAPPING.items():
-        # print(wa_text,"=============================",internal_issue)
         if normalize(wa_text) == msg_norm:
-            return internal_issue   # matched
+            return internal_issue
 
     return None
 
@@ -221,10 +216,6 @@ def check_non_critical_issue(msg):
             return internal_issue   # matched
 
     return None
-
-async def send_second_message_after_delay(wa):
-    await asyncio.sleep(10)
-    send_text_template(wa, TEMPLATE_ASSISTANCE_CONFIRMATION)
 
 
 def download_interest_certificate(loan_number, from_date, to_date):
@@ -348,9 +339,6 @@ def send_whatsapp_cta_template(to_number,template_name):
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-        # print("Status Code:", response.status_code)
-        # print("Response:", response.text)
-
         return response.json()
 
     except Exception as e:
@@ -358,56 +346,6 @@ def send_whatsapp_cta_template(to_number,template_name):
             "status": False,
             "error": str(e)
         }
-
-
-# def send_whatsapp_cta_template(
-#         mobile_no: str,
-#         template_name: str,
-#         message_body: list,
-#         license_id: str,
-#         language_code: str = "en",
-#         api_type: str = "aisensy"
-# ):
-#     """
-#     Send WhatsApp CTA Template Message
-#     """
-
-#     url = "https://usomniservice.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
-
-#     payload = {
-#         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
-#         "mobile_no": mobile_no,
-#         "api_type": api_type,
-#         "type": "template",
-#         "template_name": template_name,
-#         "languageCode": language_code,
-#         "messageBody": message_body,
-#         "licenseId": license_id
-#     }
-
-#     headers = {
-#         "Content-Type": "application/json"
-#     }
-
-#     try:
-#         response = requests.post(
-#             url,
-#             headers=headers,
-#             data=json.dumps(payload),
-#             timeout=30
-#         )
-
-#         return {
-#             "status_code": response.status_code,
-#             "response": response.json()
-#         }
-
-#     except Exception as e:
-#         return {
-#             "status": False,
-#             "error": str(e)
-#         }
-
 
 
 def fetch_repayment_schedule(loan_number):
@@ -552,262 +490,8 @@ def create_loan_details_pdf(loan_rows, file_path):
     doc.build(elements)
 
 
-
-
-def build_emi_message(api_data, loan_no):
-    rows = api_data.get("crRepayschDtlList", [])
-
-    if not rows:
-        return "❌ EMI schedule not found for this loan number."
-
-    msg = f"📄 *EMI Repayment Schedule*\n\nLoan No: {loan_no}\n\n"
-
-    for i, r in enumerate(rows[:6], 1):
-        date = datetime.strptime(r["instlDate"], "%Y-%m-%d").strftime("%d-%b-%Y")
-
-        msg += (
-            f"{i}️⃣ {date}\n"
-            f"EMI: ₹{int(float(r['instlAmount'])):,}\n"
-            f"Principal: ₹{int(float(r['prinComp'])):,}\n"
-            f"Interest: ₹{int(float(r['intComp'])):,}\n"
-            f"Balance: ₹{int(float(r['prinOs'])):,}\n\n"
-        )
-
-    msg += "📌 For complete schedule, type *PDF*"
-
-    return msg.strip()
-
-# ==============================
-# 📤 Send Text
-# ==============================
-def send_text(to, message):
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{PHONE_NUMBER_ID}/messages"
-    headers = {
-        "Authorization": f"Bearer {VERIFY_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": to,
-        "type": "text",
-        "text": {"body": message}
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    response = response.json()
-
-
-    return response
-
-
-def send_text_template(to, template):
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{PHONE_NUMBER_ID}/messages"
-    headers = {
-        "Authorization": f"Bearer {VERIFY_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": f"{to}",
-        "type": "template",
-        "template": {
-        "name": f"{template}",
-        "language": { "code": "en" }
-        }
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    response = response.json()
-
-    return response
-
-
-def send_text_template_with_variables(to, template, user_name):
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{PHONE_NUMBER_ID}/messages"
-
-    headers = {
-        "Authorization": f"Bearer {VERIFY_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": str(to),
-        "type": "template",
-        "template": {
-            "name": template,
-            "language": {
-                "code": "en"
-            },
-            "components": [
-                {
-                    "type": "body",
-                    "parameters": [
-                        {
-                            "type": "text",
-                            "text": user_name
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    data = response.json()
-
-    return data
-
-
-def send_text_template_flow(to, flow_id):
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{PHONE_NUMBER_ID}/messages"
-
-    headers = {
-        "Authorization": f"Bearer {VERIFY_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": to,
-        "type": "interactive",
-        "interactive": {
-            "type": "flow",
-            "body": {
-            "text": "Please provide your details below to start your loan application process."
-            },
-            "action": {
-            "name": "flow",
-            "parameters": {
-                "flow_message_version": "3",
-                "flow_id": flow_id,
-                "flow_cta": "Apply Now"
-            }
-            }
-        }
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    data = response.json()
-
-    return data
-
-def send_whatsapp_flow_message(phone_number: str, flow_token: str):
-    """
-    Send WhatsApp template message with Flow button
-
-    Args:
-        phone_number (str): Recipient phone number with country code (e.g., 917533943345)
-        flow_token (str): Flow token for the WhatsApp flow
-    """
-
-    url = "https://partnersV1.pinbot.ai/v3/742406742288776/messages"
-
-    headers = {
-        "apikey": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": phone_number,
-        "type": "template",
-        "template": {
-            "name": "apply_loan_application",
-            "language": {
-                "code": "en"
-            },
-            "components": [
-                {
-                    "type": "button",
-                    "sub_type": "flow",
-                    "index": "0",
-                    "parameters": [
-                        {
-                            "type": "action",
-                            "action": {
-                                "flow_token": flow_token
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=10)
-        return {
-            "status_code": response.status_code,
-            "response": response.json()
-        }
-    except Exception as e:
-        return {
-            "error": str(e)
-        }
-
-def send_text_template_with_header_variables(to, template, header_name, body_name):
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{PHONE_NUMBER_ID}/messages"
-
-    headers = {
-        "Authorization": f"Bearer {VERIFY_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": str(to),
-        "type": "template",
-        "template": {
-            "name": template,
-            "language": {
-                "code": "en"
-            },
-            "components": [
-                {
-                    "type": "header",
-                    "parameters": [
-                        {
-                            "type": "text",
-                            "text": header_name
-                        }
-                    ]
-                },
-                {
-                    "type": "body",
-                    "parameters": [
-                        {
-                            "type": "text",
-                            "text": body_name
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    return response.json()
-
-
-
 def send_cibil_pdf_whatsapp(to, pdf_url,filename):
     url = "https://omniqa.c-zentrix.com/whatsappApi_v2/OUT/outgoing.php"
-
-    # payload = {
-    #     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3Npc3RhbnRJZCI6IjY1MTExNjY5YTAxYzhjMGJkNWZlNmE3MiIsImNsaWVudElkIjoiNjUxMTE2NjlhMDFjOGMwYmQ1ZmU2YTY4Iiwid2ViaG9va1VybCI6Imh0dHBzOi8vdXNvbW5pc2VydmljZS5jLXplbnRyaXguY29tL3doYXRzYXBwQXBpX3YyL0lOL2FpU2Vuc3lJbmNvbWluZy5waHA_bGljZW5zZUlkPTI4MWVjYWE1OWU1OTQ1MTkxMWM1ZGVmMDViYzk4ZjM5JmRlcHQ9MjIzJnR5cGU9Y2hhdCZ2ZW5kb3I9YWlzZW5zeSZ0YWc9U2FsZXMiLCJpYXQiOjE3NDYwMTg3MTN9.2btlReQSS77WfBeJ5OJoo9D0CLS3PWtcVHQQXMzcgNk",
-    #     "mobile_no": to,
-    #     "type": "document",
-    #     "tag": "OTVT",
-    #     "licenseId": "8e2a733c2796c6367e838fff6191b74d",
-    #     "api_type": "aisensy",
-    #     "media_url": pdf_url,
-    #     "messageBody": filename,
-    #     "mime_type": "application/pdf"
-    # }
 
     payload = {
         "token": "6e90b3a8-7f1e-11f0-98fc-02c8a5e042bd",
@@ -829,28 +513,11 @@ def send_cibil_pdf_whatsapp(to, pdf_url,filename):
 
     try:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
-        # print("Status Code:", response.status_code)
-        # print("Response:", response.text)
         return response.json()
     except Exception as e:
         print("Error:", str(e))
         return None
 
-# =====================================================
-# TWILIO HELPER
-# =====================================================
-def send_twilio_template(to, TEMPLATE, variables=None):
-    url = f"https://api.twilio.com/2010-04-01/Accounts/{TWILIO_ACCOUNT_SID}/Messages.json"
-    payload = {
-        "To": f"whatsapp:{to}",
-        "From": TWILIO_WHATSAPP_FROM,
-        "Body": "Hi",
-        "ContentSid": TEMPLATE,
-    }
-    if variables:
-        payload["ContentVariables"] = json.dumps(variables)
-    res = requests.post(url, data=payload, auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN), timeout=10)
-    return res.json()
 
 # =====================================================
 # HELPERS
@@ -1320,13 +987,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -1339,42 +1000,32 @@ async def chat_process(req: Request):
 
     if not user:
         reset_flow(wa, clear_mobile=True)
-        # send_text_template(wa, TEMPLATE_GREETING)
-        # return {"reply": "Welcome 👋 Template sent", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
+                    "type": "TextBlock",
+                    "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "English",
-                    "title": "English",
-                    "value": "English"
-                    },
-                    {
-                    "id": "Hindi",
-                    "title": "Hindi",
-                    "value": "Hindi"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "English",
+                            "title": "English",
+                            "value": "English"
+                        },
+                        {
+                            "id": "Hindi",
+                            "title": "Hindi",
+                            "value": "Hindi"
+                        }
+                    ]
                 }
             ],
-            "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
-            ]
+            "actions": []
         }
         return payload
 
@@ -1383,54 +1034,40 @@ async def chat_process(req: Request):
         tmp_step = user["tmp_step"]
     except:
         tmp_step = ""
-    # print(user,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
-    # print(msg,"mmmmmmmmmmmmmmmmmmmmm")
-    # print(step,"ssssssssssssssssssss")
-    # print(tmp_step,"tttttttttttttttttmmmmmmmmmmppppppppp")
 
     existing_mobile = user.get("mobile") if user else None
-
 
     if step == "LANG" and msg.lower() in ["hii", "hi", "hey", "hello","Root","root","start","Start"]:
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
+                    "type": "TextBlock",
+                    "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "English",
-                    "title": "English",
-                    "value": "English"
-                    },
-                    {
-                    "id": "Hindi",
-                    "title": "Hindi",
-                    "value": "Hindi"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "English",
+                            "title": "English",
+                            "value": "English"
+                        },
+                        {
+                            "id": "Hindi",
+                            "title": "Hindi",
+                            "value": "Hindi"
+                        }
+                    ]
                 }
             ],
-            "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
-            ]
+            "actions": []
         }
         return payload
 
 
-    # Jab mobile number NA ho
     if not existing_mobile and msg.lower() in ["hii", "hi", "hey", "hello","Root","root","start","Start"] and msg:
         reset_flow(wa)  # No mobile to preserve
 
@@ -1438,35 +1075,71 @@ async def chat_process(req: Request):
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
+                    "type": "TextBlock",
+                    "text": "I am Citra, your Virtual Assistant.I am here to help you. Hope you are doing well.Please select one of the options below to start"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "English",
-                    "title": "English",
-                    "value": "English"
-                    },
-                    {
-                    "id": "Hindi",
-                    "title": "Hindi",
-                    "value": "Hindi"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "English",
+                            "title": "English",
+                            "value": "English"
+                        },
+                        {
+                            "id": "Hindi",
+                            "title": "Hindi",
+                            "value": "Hindi"
+                        }
+                    ]
                 }
             ],
             "actions": [
+                
+            ]
+        }
+        return payload
+
+    if step == "LANG" and msg == "Branch Locator":
+        reset_flow(wa)
+        data = send_whatsapp_cta_template(
+            wa,
+            "branchlocator"
+        )
+        time.sleep(2)
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
                 {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
+                    "type": "TextBlock",
+                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
+                },
+                {
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
                 }
+            ],
+            "actions": [
             ]
         }
         return payload
@@ -1474,52 +1147,43 @@ async def chat_process(req: Request):
     existing_smsRecordId = user.get("smsRecordId") if user else None
     if existing_mobile and msg.lower() in ["hii", "hi", "hey", "hello","Root","root","start","Start"] and msg:
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # return {"reply": "existing user", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "How may i help you today?"
+                    "type": "TextBlock",
+                    "text": "How may i help you today?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "Apply For New Loan",
-                    "title": "Apply For New Loan",
-                    "value": "Apply For New Loan"
-                    },
-                    {
-                    "id": "Existing Customer",
-                    "title": "Existing Customer",
-                    "value": "Existing Customer"
-                    },
-                    {
-                    "id": "Branch Locator",
-                    "title": "Branch Locator",
-                    "value": "Branch Locator"
-                    },
-                    {
-                    "id": "Customer Support",
-                    "title": "Customer Support",
-                    "value": "Customer Support"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply For New Loan",
+                            "title": "Apply For New Loan",
+                            "value": "Apply For New Loan"
+                        },
+                        {
+                            "id": "Existing Customer",
+                            "title": "Existing Customer",
+                            "value": "Existing Customer"
+                        },
+                        {
+                            "id": "Branch Locator",
+                            "title": "Branch Locator",
+                            "value": "Branch Locator"
+                        },
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -1560,13 +1224,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
+                   
                 ]
             }
             return payload
@@ -1612,13 +1270,7 @@ async def chat_process(req: Request):
                         }
                     ],
                     "actions": [
-                        {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                        }
+                        
                     ]
                 }
                 return payload
@@ -1661,25 +1313,18 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
-        # return {"reply": "Main Menu", "flag": True}
-
+    
 
     if msg == "Calculators" and step == "NEW_LOAN_MENU":
         data = send_whatsapp_cta_template(
             wa,
             "calculators"
         )
-        time.sleep(1)
+        time.sleep(2)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -1711,13 +1356,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -1760,13 +1399,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -1825,16 +1458,9 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
-        # return payload
         return payload
 
 
@@ -1896,71 +1522,56 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
 
 
     if msg == "Back To Menu" and step == "LANG":
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "How may i help you today?"
+                    "type": "TextBlock",
+                    "text": "How may i help you today?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "Apply For New Loan",
-                    "title": "Apply For New Loan",
-                    "value": "Apply For New Loan"
-                    },
-                    {
-                    "id": "Existing Customer",
-                    "title": "Existing Customer",
-                    "value": "Existing Customer"
-                    },
-                    {
-                    "id": "Branch Locator",
-                    "title": "Branch Locator",
-                    "value": "Branch Locator"
-                    },
-                    {
-                    "id": "Customer Support",
-                    "title": "Customer Support",
-                    "value": "Customer Support"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply For New Loan",
+                            "title": "Apply For New Loan",
+                            "value": "Apply For New Loan"
+                        },
+                        {
+                            "id": "Existing Customer",
+                            "title": "Existing Customer",
+                            "value": "Existing Customer"
+                        },
+                        {
+                            "id": "Branch Locator",
+                            "title": "Branch Locator",
+                            "value": "Branch Locator"
+                        },
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
-        # return {"reply": "Back To Menu", "flag": True}
 
     if msg == "Back To Menu" and step == "MAIN_MENU":
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
         payload = {
             "type": "adaptiveCard",
@@ -1970,41 +1581,35 @@ async def chat_process(req: Request):
                 "text": "How may i help you today?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "Apply For New Loan",
-                    "title": "Apply For New Loan",
-                    "value": "Apply For New Loan"
-                    },
-                    {
-                    "id": "Existing Customer",
-                    "title": "Existing Customer",
-                    "value": "Existing Customer"
-                    },
-                    {
-                    "id": "Branch Locator",
-                    "title": "Branch Locator",
-                    "value": "Branch Locator"
-                    },
-                    {
-                    "id": "Customer Support",
-                    "title": "Customer Support",
-                    "value": "Customer Support"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply For New Loan",
+                            "title": "Apply For New Loan",
+                            "value": "Apply For New Loan"
+                        },
+                        {
+                            "id": "Existing Customer",
+                            "title": "Existing Customer",
+                            "value": "Existing Customer"
+                        },
+                        {
+                            "id": "Branch Locator",
+                            "title": "Branch Locator",
+                            "value": "Branch Locator"
+                        },
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2048,13 +1653,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2099,19 +1698,12 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
 
     if msg == "Back To Menu" and step == "MAIN_MENU":
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
         # return {"reply": "Back To Menu", "flag": True}
         payload = {
@@ -2150,21 +1742,13 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
 
     if msg == "Back To Menu" and step == "EC_MENU":
         save_user(wa, {"step": "MAIN_MENU"})
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # return {"reply": "Back To Menu", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -2201,13 +1785,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2216,8 +1794,6 @@ async def chat_process(req: Request):
 
     if msg == "Back To Menu" and step == "Contact_Us":
         save_user(wa, {"step": "EC_MENU"})
-        # send_text_template(wa, EXISTING_LOAN_NUMBER)
-        # return {"reply": "Back To Menu", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -2274,13 +1850,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2328,21 +1898,13 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
 
     if msg == "Back To Menu" and step == "DOC_MENU":
         save_user(wa, {"step": "EC_MENU"})
-        # send_text_template(wa, EXISTING_LOAN_NUMBER)
-        # return {"reply": "Back To Menu", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -2399,13 +1961,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2463,13 +2019,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2498,13 +2048,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -2538,12 +2082,13 @@ async def chat_process(req: Request):
                             "type": "TextBlock",
                             "text": "Please enter your valid 10-digit mobile number to continue with the verification process."
                         }
+                        
                     ],
                     "actions": [
                     ]
             }
             return payload
-            # return {"reply": "Select language", "flag": True}
+            
 
         if msg == "Change Number" and step == "OTP_FAILED_MENU":
             save_user(wa, {"step": "ASK_MOBILE", "attempt": 0})
@@ -2561,6 +2106,86 @@ async def chat_process(req: Request):
 
             return payload
 
+    if step == "OTP" and msg == "Change Number":
+        save_user(wa, {"step": "ASK_MOBILE", "attempt": 0})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Please enter your valid 10-digit mobile number to continue with the verification process."
+                }
+            ],
+            "actions": []
+        }
+
+        return payload
+
+    if step == "OTP" and msg == "RESEND OTP":
+        stored_mobile = user.get("mobile")
+        if stored_mobile:
+            otp_res = generate_otp(stored_mobile)
+            if otp_res.get("operationStatus") == "1":
+                save_user(wa, {
+                    "smsRecordId": otp_res.get("smsRecordId"),
+                    "step": "OTP",
+                    "attempt": 0
+                })
+                payload = payload = {
+                    "type": "adaptiveCard",
+                    "body": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Your One-Time Password (OTP) has been resent successfully.\n\nPlease enter the valid OTP to proceed.\n\nIf you have entered an incorrect mobile number, you can change it, or you can request to resend the OTP."
+                        },
+                        {
+                            "type": "Button",
+                            "id": "serviceType",
+                            "style": "expanded",
+                            "choices": [
+                                {
+                                    "id": "Change Number",
+                                    "title": "Change Number",
+                                    "value": "Change Number"
+                                },
+                                {
+                                    "id": "RESEND OTP",
+                                    "title": "RESEND OTP",
+                                    "value": "RESEND OTP"
+                                }
+                            ]
+                        }
+                    ],
+                    "actions": []
+                }
+                return payload
+
+        if attempt_failed(user, wa):
+            payload = {
+                "type": "adaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Please enter your valid 10-digit mobile number to continue with the verification process."
+                    }
+                ],
+                "actions": [
+                ]
+            }
+
+            return payload
+        return {
+                "type": "adaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Invalid response. Please choose from the options shared below."
+                    }
+                ],
+                "actions": [
+                ]
+            }
+
     # =====================================================
     # MOBILE COLLECTION
     # =====================================================
@@ -2574,17 +2199,32 @@ async def chat_process(req: Request):
                     "body": [
                         {
                             "type": "TextBlock",
-                            "text": "Your One-Time Password (OTP) has been sent successfully.\n\nPlease enter the valid OTP to proceed."
+                            "text": "Your One-Time Password (OTP) has been resent successfully.\n\nPlease enter the valid OTP to proceed.\n\nIf you have entered an incorrect mobile number, you can change it, or you can request to resend the OTP."
+                        },
+                        {
+                            "type": "Button",
+                            "id": "serviceType",
+                            "style": "expanded",
+                            "choices": [
+                                {
+                                    "id": "Change Number",
+                                    "title": "Change Number",
+                                    "value": "Change Number"
+                                },
+                                {
+                                    "id": "RESEND OTP",
+                                    "title": "RESEND OTP",
+                                    "value": "RESEND OTP"
+                                }
+                            ]
                         }
                     ],
-                    "actions": [
-                    ]
+                    "actions": []
                 }
                 return payload
 
 
         if attempt_failed(user, wa):
-            # send_text_template(wa, TEMPLATE_PHONE_NUMBER)
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -2598,13 +2238,23 @@ async def chat_process(req: Request):
             }
 
             return payload
-        return {"reply": "Enter valid mobile text template"}
+        
+        return {
+                "type": "adaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Invalid response. Please choose from the options shared below."
+                    }
+                ],
+                "actions": [
+                ]
+            }
 
     elif step == "OTP_FAILED_MENU" and msg == "RESEND OTP":
-        # if step == "OTP_FAILED_MENU" and msg == "RESEND OTP":
-        stored_mobile = user.get("mobile") # MongoDB se saved number nikala
+        stored_mobile = user.get("mobile")
         if stored_mobile:
-            otp_res = generate_otp(stored_mobile) # Saved number par OTP bheja
+            otp_res = generate_otp(stored_mobile)
             if otp_res.get("operationStatus") == "1":
                 save_user(wa, {
                     "smsRecordId": otp_res.get("smsRecordId"),
@@ -2616,11 +2266,27 @@ async def chat_process(req: Request):
                     "body": [
                         {
                             "type": "TextBlock",
-                            "text": "Your One-Time Password (OTP) has been resent successfully.\n\nPlease enter the valid OTP to proceed."
+                            "text": "Your One-Time Password (OTP) has been resent successfully.\n\nPlease enter the valid OTP to proceed.\n\nIf you have entered an incorrect mobile number, you can change it, or you can request to resend the OTP."
+                        },
+                        {
+                            "type": "Button",
+                            "id": "serviceType",
+                            "style": "expanded",
+                            "choices": [
+                                {
+                                    "id": "Change Number",
+                                    "title": "Change Number",
+                                    "value": "Change Number"
+                                },
+                                {
+                                    "id": "RESEND OTP",
+                                    "title": "RESEND OTP",
+                                    "value": "RESEND OTP"
+                                }
+                            ]
                         }
                     ],
-                    "actions": [
-                    ]
+                    "actions": []
                 }
                 return payload
 
@@ -2638,7 +2304,17 @@ async def chat_process(req: Request):
             }
 
             return payload
-        return {"reply": "Enter valid mobile text template"}
+        return {
+                "type": "adaptiveCard",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Invalid response. Please choose from the options shared below."
+                    }
+                ],
+                "actions": [
+                ]
+            }
 
     # =====================================================
     # OTP VERIFICATION
@@ -2683,20 +2359,13 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
+                    
                 ]
             }
             return payload
 
         if attempt_failed(user, wa):
             save_user(wa, {"step": "OTP_FAILED_MENU", "attempt": 0})
-            # send_text_template(wa, changeandresendmenu)
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -2738,13 +2407,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
             ]
         }
 
@@ -2756,45 +2418,38 @@ async def chat_process(req: Request):
             "type": "adaptiveCard",
             "body": [
                 {
-                "type": "TextBlock",
-                "text": "Welcome to WHFL! What can I assist you?"
+                    "type": "TextBlock",
+                    "text": "Welcome to WHFL! What can I assist you?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                        "id": "Apply for a Loan",
-                        "title": "Apply for a Loan",
-                        "value": "Apply for a Loan"
-                    },
-                    {
-                        "id": "Calculators",
-                        "title": "Calculators",
-                        "value": "Calculators"
-                    },
-                    {
-                        "id": "Back To Menu",
-                        "title": "Back To Menu",
-                        "value": "Back To Menu"
-                    },
-                    {
-                        "id": "Main Menu",
-                        "title": "Main Menu",
-                        "value": "Main Menu"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply for a Loan",
+                            "title": "Apply for a Loan",
+                            "value": "Apply for a Loan"
+                        },
+                        {
+                            "id": "Calculators",
+                            "title": "Calculators",
+                            "value": "Calculators"
+                        },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -2806,8 +2461,6 @@ async def chat_process(req: Request):
     if step == "MAIN_MENU":
         if msg == "Apply For New Loan":
             save_user(wa, {"step": "NEW_LOAN_MENU"})
-            # send_text_template(wa, TEMPLATE_NEW_PROSPECT_MENU)
-            # return {"reply": "New prospect menu", "flag": True}
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -2844,15 +2497,7 @@ async def chat_process(req: Request):
                         ]
                     }
                 ],
-                "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
-                ]
+                "actions": []
             }
             return payload
 
@@ -2860,19 +2505,13 @@ async def chat_process(req: Request):
         if msg == "Existing Customer":
             filename = "existing-loan-details-8076893187.pdf"
             file_path = f"{PDF_STORAGE_PATH}/{filename}"
-            #loan_data = get_loan_details("8076893187")
-            #loan_rows = extract_loan_details(loan_data)
+            loan_data = get_loan_details("8076893187")
+            loan_rows = extract_loan_details(loan_data)
 
-            #create_loan_details_pdf(loan_rows, file_path)
+            create_loan_details_pdf(loan_rows, file_path)
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-            # print(pdf_url,"pdf_url")
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,filename)
-            # print(tmp_data,"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            loan_data = {
-                    "operationStatus": "1"
-
-                    }
 
             if loan_data["operationStatus"] == "1":
                 res = get_all_loan("8076893187")
@@ -2887,13 +2526,6 @@ async def chat_process(req: Request):
                         }
                     ],
                     "actions": [
-                        {
-                            "type": "Action.Submit",
-                            "title": "Submit",
-                            "id": "crmSubmitForm",
-                            "value": "Submit",
-                            "actionId": "7777.70007"
-                        }
                     ]
                 }
                 return payload
@@ -2924,13 +2556,6 @@ async def chat_process(req: Request):
                         }
                     ],
                     "actions": [
-                        {
-                            "type": "Action.Submit",
-                            "title": "Submit",
-                            "id": "crmSubmitForm",
-                            "value": "Submit",
-                            "actionId": "7777.70007"
-                        }
                     ]
                 }
                 return payload
@@ -2941,7 +2566,7 @@ async def chat_process(req: Request):
                 wa,
                 "branchlocator"
             )
-            time.sleep(1)
+            time.sleep(2)
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -2973,17 +2598,55 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
                 ]
             }
             return payload
 
+    if step == "CRITCAL_CASE" and msg == "More Option":
+        save_user(wa, {"step": "CRITCAL_CASE"})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Welcome to Wonder Home Finance Customer Support.\n\nPlease select the service request that best matches your concern. Our support team will assist you accordingly."
+                },
+                {
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Misconduct by WHFL",
+                            "title": "Misconduct by WHFL",
+                            "value": "Misconduct by WHFL"
+                        },
+                        {
+                            "id": "Miscommunication",
+                            "title": "Miscommunication",
+                            "value": "Miscommunication"
+                        },
+                        {
+                            "id": "More Option",
+                            "title": "More Option",
+                            "value": "More Option"
+                        },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
+                }
+            ],
+            "actions": []
+        }
+        return payload
 
     if step == "CUSTOMER_ASS" and msg == "Critical cases":
         save_user(wa, {"step": "CRITCAL_CASE"})
@@ -3002,7 +2665,7 @@ async def chat_process(req: Request):
                         {
                             "id": "FCL/SOA/LOD Request",
                             "title": "FCL / SOA / LOD Request",
-                            "value": "FCL/SOA/LOD Request"
+                            "value": "FCL / SOA / LOD Request"
                         },
                         {
                             "id": "EMI/ Pre-EMI Related",
@@ -3053,13 +2716,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3127,13 +2783,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70008"
-                }
             ]
         }
 
@@ -3169,13 +2818,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3203,13 +2845,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3282,13 +2917,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3331,13 +2959,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3364,9 +2985,6 @@ async def chat_process(req: Request):
 
         if msg == "BACK TO MENU":
             save_user(wa, {"step": "MAIN_MENU"})
-            # # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-            # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-            # return {"reply": "Back to main menu", "flag": True}
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -3403,13 +3021,6 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
                 ]
             }
             return payload
@@ -3472,19 +3083,9 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
-        # send_text_template_with_variables(wa, TEMPLATE_NEW_PROSPECT_LOAN_TYPE, msg)
-        # return {"reply": "TEMPLATE_NEW_PROSPECT_LOAN_TYPE", "flag": True}
-
 
     if step == "NP_PAN":
         save_user(wa, {"name": msg, "step": "NP_FLOW"})
@@ -3527,13 +3128,10 @@ async def chat_process(req: Request):
             msg = json.loads(msg)
 
         pan = msg.get("screen_0_Enter_Pan_No_1")
-        # print(pan,"+++++++++++++++++++++++++++++++++++")
         response = verify_pan(pan)
-        # print(response,"")
         status_code = response.get("status-code")
         if status_code == "101":
             user_data = get_user(wa)
-            # print(user_data,"11111111111111111111111111111")
             access_token = generate_transunion_token()
             document_id,ApplicantLastName,PanNumber = submit_cibil_application(access_token)
             cibil_report = "cibil_report_" + ApplicantLastName + "_" + PanNumber +".pdf"
@@ -3541,18 +3139,6 @@ async def chat_process(req: Request):
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={cibil_report}"
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,cibil_report)
 
-            lead_payload = {
-                "name": user_data.get("name"),
-                "mobile": user_data.get("mobile"),
-                "loan_type": user_data.get("loan_type"),
-                "amount": user_data.get("amount"),
-                "tenure": user_data.get("tenure"),
-                "pincode": user_data.get("pincode"),
-                "pan": msg
-            }
-
-            # reset_flow(wa)
-            # send_text_template(wa, returntomenu)
             save_user(wa, {"step": "MAIN_MENU"})
             # delete_pdf_file(cibil_report)
             payload = {
@@ -3592,41 +3178,49 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
                 ]
             }
             return payload
         else:
-            result = send_whatsapp_flow_message(
-                phone_number=wa,
-                flow_token="123"
-            )
             save_user(wa, {"name": msg, "step": "NP_FLOW"})
             payload = {
-                "type": "adaptiveCard",
-                "body": [
-                    {
-                        "type": "TextBlock",
-                        "text": "We are unable to verify the PAN number provided.\n\nPlease check your PAN details and enter a valid PAN to continue with your application."
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "We are unable to verify the PAN number provided.\n\nPlease check your PAN details and enter a valid PAN to continue with your application."
+                },
+                {
+                    "type": "flow",
+                    "id": "loanApplication",
+                    "style": "expanded",
+                    "flow": {
+                        "name": "apply_loan_application",
+                        "language": {
+                        "code": "en"
+                        },
+                        "components": [
+                        {
+                            "type": "button",
+                            "sub_type": "flow",
+                            "index": "0",
+                            "parameters": [
+                            {
+                                "type": "action",
+                                "action": {
+                                "flow_token": "123"
+                                }
+                            }
+                            ]
+                        }
+                        ]
                     }
-                ],
-                "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
-                ]
+                }
+            ],
+            "actions": []
             }
             return payload
+           
 
     if step == "MAIN_MENU" and msg == "Customer Support":
         save_user(wa, {"step": "CUSTOMER_SUPPORT"})
@@ -3681,24 +3275,12 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
-        # return payload
         return payload
 
-    # if msg == "MAIN_MENU" and step == "Back to Menu":
     if step == "MAIN_MENU" and msg == "Main Menu":
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # return {"reply": "finish step", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -3735,13 +3317,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3799,23 +3374,12 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
-        # return payload
         return payload
 
 
-    # if msg == "MAIN_MENU" and step == "Back to Menu":
     if step == "EC_MENU" and msg == "Main Menu":
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
         payload = {
             "type": "adaptiveCard",
@@ -3825,41 +3389,34 @@ async def chat_process(req: Request):
                 "text": "How may i help you today?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "Apply For New Loan",
-                    "title": "Apply For New Loan",
-                    "value": "Apply For New Loan"
-                    },
-                    {
-                    "id": "Existing Customer",
-                    "title": "Existing Customer",
-                    "value": "Existing Customer"
-                    },
-                    {
-                    "id": "Branch Locator",
-                    "title": "Branch Locator",
-                    "value": "Branch Locator"
-                    },
-                    {
-                    "id": "Customer Support",
-                    "title": "Customer Support",
-                    "value": "Customer Support"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply For New Loan",
+                            "title": "Apply For New Loan",
+                            "value": "Apply For New Loan"
+                        },
+                        {
+                            "id": "Existing Customer",
+                            "title": "Existing Customer",
+                            "value": "Existing Customer"
+                        },
+                        {
+                            "id": "Branch Locator",
+                            "title": "Branch Locator",
+                            "value": "Branch Locator"
+                        },
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3873,7 +3430,6 @@ async def chat_process(req: Request):
         create_loan_details_pdf(loan_rows, file_path)
 
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
-        # print(pdf_url,"pdf_url")
         tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,filename)
         res = get_all_loan("8076893187")
         reply_text,customerName = format_loans_for_whatsapp(res)
@@ -3909,13 +3465,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -3926,7 +3475,7 @@ async def chat_process(req: Request):
             wa,
             "branchlocator"
         )
-        time.sleep(1)
+        time.sleep(2)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -3958,13 +3507,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4022,16 +3564,8 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
-        # return payload
         return payload
 
     if step == "CRITCAL_CASE" and msg == "Back To Menu":
@@ -4062,13 +3596,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4090,7 +3617,7 @@ async def chat_process(req: Request):
                         {
                             "id": "FCL/SOA/LOD Request",
                             "title": "FCL / SOA / LOD Request",
-                            "value": "FCL/SOA/LOD Request"
+                            "value": "FCL / SOA / LOD Request"
                         },
                         {
                             "id": "EMI/ Pre-EMI Related",
@@ -4141,13 +3668,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4186,13 +3706,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4231,13 +3744,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4276,13 +3782,6 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
             ]
         }
         return payload
@@ -4321,13 +3820,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4366,19 +3859,12 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
 
     if msg == "Documents" and step == "EC_MENU":
-        # send_text_template(wa, docmenutemplatelistmenu)
         save_user(wa, {"step": "DOC_MENU"})
         payload = {
             "type": "adaptiveCard",
@@ -4421,13 +3907,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4439,7 +3919,7 @@ async def chat_process(req: Request):
             wa,
             "payemi"
         )
-        time.sleep(1)
+        time.sleep(2)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4471,13 +3951,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
 
@@ -4490,7 +3964,7 @@ async def chat_process(req: Request):
             wa,
             "whfl_app"
         )
-        time.sleep(1)
+        time.sleep(2)
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4522,13 +3996,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
 
@@ -4537,12 +4005,6 @@ async def chat_process(req: Request):
 
     if msg == "Back To Menu" and step == "DOC_MENU":
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # send_text_template(wa, TEMPLATE_FIRST_MAIN_MENU)
-        # return {
-        #     "reply": "Back To Menu",
-        #     "flag": True
-        # }
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4551,41 +4013,35 @@ async def chat_process(req: Request):
                 "text": "How may i help you today?"
                 },
                 {
-                "type": "Button",
-                "id": "serviceType",
-                "style": "expanded",
-                "choices": [
-                    {
-                    "id": "Apply For New Loan",
-                    "title": "Apply For New Loan",
-                    "value": "Apply For New Loan"
-                    },
-                    {
-                    "id": "Existing Customer",
-                    "title": "Existing Customer",
-                    "value": "Existing Customer"
-                    },
-                    {
-                    "id": "Branch Locator",
-                    "title": "Branch Locator",
-                    "value": "Branch Locator"
-                    },
-                    {
-                    "id": "Customer Support",
-                    "title": "Customer Support",
-                    "value": "Customer Support"
-                    }
-                ]
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Apply For New Loan",
+                            "title": "Apply For New Loan",
+                            "value": "Apply For New Loan"
+                        },
+                        {
+                            "id": "Existing Customer",
+                            "title": "Existing Customer",
+                            "value": "Existing Customer"
+                        },
+                        {
+                            "id": "Branch Locator",
+                            "title": "Branch Locator",
+                            "value": "Branch Locator"
+                        },
+                        {
+                            "id": "Customer Support",
+                            "title": "Customer Support",
+                            "value": "Customer Support"
+                        }
+                    ]
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4628,13 +4084,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Submit",
-                    "id": "crmSubmitForm",
-                    "value": "Submit",
-                    "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4677,13 +4127,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4751,20 +4195,12 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
+                    
                 ]
             }
 
             return payload
         else:
-            # send_text_template(wa, EXISTING_LOAN_NUMBER_NOT_VALID)
-            # return {"reply": "We are unable to verify the loan number with the registered mobile number.Kindly update your mobile number at the nearest branch or raise a request through the WHFL Mobile App for assistance.", "flag": False}
             payload = {
                 "type": "adaptiveCard",
                 "body": [
@@ -4791,13 +4227,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
             }
 
@@ -4806,9 +4236,7 @@ async def chat_process(req: Request):
     if step == "DOC_MENU" and msg == "Mini SOA":
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=cibil_report_BANSAL_DVWPB4941P.pdf"
         tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"Interest_Certificate_LN29003HP22-23010778.pdf")
-        # send_text_template(wa, returntomenu)
         save_user(wa, {"step": "DOC_MENU"})
-        # return {"reply": "Mini SOA", "flag": True}
         payload = {
             "type": "adaptiveCard",
             "body": [
@@ -4840,13 +4268,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4891,13 +4313,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
         }
         return payload
@@ -4911,9 +4327,9 @@ async def chat_process(req: Request):
             create_emi_pdf("LN29003HP22-23010778", emi_rows, file_path)
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=EMI_Schedule_LN29003HP22-23010778.pdf"
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"EMI_Schedule_LN29003HP22-23010778.pdf")
-            
+
             # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
-            
+
             save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
             time.sleep(2)
             payload = {
@@ -4947,13 +4363,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    {
-                        "type": "Action.Submit",
-                        "title": "Submit",
-                        "id": "crmSubmitForm",
-                        "value": "Submit",
-                        "actionId": "7777.70007"
-                    }
+                    
             ]
             }
             return payload
@@ -4989,13 +4399,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
+                
             ]
             }
             return payload
@@ -5004,9 +4408,9 @@ async def chat_process(req: Request):
         download_welcome_letter("LN29003HP22-23010778")
         pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file=welcome_letter_LN29003HP22-23010778.pdf"
         tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,"welcome_letter_LN29003HP22-23010778.pdf")
-        
+
         # delete_pdf_file("welcome_letter_LN29003HP22-23010778.pdf")
-        
+
         save_user(wa, {"step": "DOC_MENU", "tmp_step": "DOC_TYPE"})
         time.sleep(2)
         payload = {
@@ -5039,71 +4443,51 @@ async def chat_process(req: Request):
                     ]
                 }
             ],
-            "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
-            ]
+            "actions": []
         }
         return payload
 
-
     if existing_mobile:
         if msg == "English" or msg == "english":
-
             save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
             payload = {
                 "type": "adaptiveCard",
                 "body": [
                     {
-                    "type": "TextBlock",
-                    "text": "How may i help you today?"
+                        "type": "TextBlock",
+                        "text": "How may i help you today?"
                     },
                     {
-                    "type": "Button",
-                    "id": "serviceType",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                        "id": "Apply For New Loan",
-                        "title": "Apply For New Loan",
-                        "value": "Apply For New Loan"
-                        },
-                        {
-                        "id": "Existing Customer",
-                        "title": "Existing Customer",
-                        "value": "Existing Customer"
-                        },
-                        {
-                        "id": "Branch Locator",
-                        "title": "Branch Locator",
-                        "value": "Branch Locator"
-                        },
-                        {
-                        "id": "Customer Support",
-                        "title": "Customer Support",
-                        "value": "Customer Support"
-                        }
-                    ]
+                        "type": "Button",
+                        "id": "serviceType",
+                        "style": "expanded",
+                        "choices": [
+                            {
+                                "id": "Apply For New Loan",
+                                "title": "Apply For New Loan",
+                                "value": "Apply For New Loan"
+                            },
+                            {
+                                "id": "Existing Customer",
+                                "title": "Existing Customer",
+                                "value": "Existing Customer"
+                            },
+                            {
+                                "id": "Branch Locator",
+                                "title": "Branch Locator",
+                                "value": "Branch Locator"
+                            },
+                            {
+                                "id": "Customer Support",
+                                "title": "Customer Support",
+                                "value": "Customer Support"
+                            }
+                        ]
                     }
                 ],
-                "actions": [
-                {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-                }
-            ]
+                "actions": []
             }
             return payload
-            # reset_flow(wa)  # No mobile to preserve
-            # return {"reply": "Main Menu", "flag": True}
 
 
     save_user(wa, {"step": "MAIN_MENU"})
@@ -5143,27 +4527,11 @@ async def chat_process(req: Request):
             }
         ],
         "actions": [
-            {
-                "type": "Action.Submit",
-                "title": "Submit",
-                "id": "crmSubmitForm",
-                "value": "Submit",
-                "actionId": "7777.70007"
-            }
+            
         ]
     }
     return payload
 
-    # return {
-    #     "reply": (
-            # "⚠️ *Session Error*\n\n"
-            # "Your current session is no longer active or has gone out of flow.\n"
-            # "To continue, please restart the conversation.\n\n"
-            # "👉 You can type *RESTART* or simply send *Hi*, *Hello*, or *Hey* to begin again.\n\n"
-            # "We’re here to assist you. Thank you for your patience 😊"
-    #     ),
-    #     "flag": False
-    # }
 
 @app.post("/api/exist-number")
 async def exist_number(req: Request):
