@@ -48,131 +48,28 @@ CRITICAL_ISSUES_WHATSAPP_BUTTONS = [
     "FCL / SOA / LOD Request",
     "EMI / Pre-EMI Related",
     "Refund",
-    "CLSS refund related",
-    "Loan Application",
     "Cibil related",
-    "Fake signature",
-    "Misconduct by WHFL",
-    "Miscommunication"
+    "Employee misconductL",
+    "Amount taken by Employee"
 ]
 
 WHATSAPP_DOC_BUTTONS = [
-    "Bounce Memo",
-    "Copy of Insurance Policy",
-    "Copy of Documents",
-    "List of Documents",
-    "Statement of Account",
-    "Repayment Schedule",
-    "Tax Certificate",
-    "Welcome Letter",
-    "Property Dispatch & NOC",
-    "Property Paper Retrieval"
+    "Others",
 ]
-
-WHATSAPP_BUTTONS_PAYMENT_EMI = [
-    "EMI Related",
-    "Insurance Refund",
-    "Part Payment",
-    "Prepayment Related",
-    "Levy of Prepay Charges",
-    "Cheque Related"
-]
-
-WHATSAPP_BUTTONS_LOAN_SERVICE = [
-    "Loan A/c Related",
-    "Loan Application Related",
-    "Loan Document Related",
-    "Loan Cancellation",
-    "Processing Fees Related",
-    "Top-up",
-    "Rate of Interest Related",
-    "Disbursement Related",
-    "Subsidy Related"
-]
-
-WHATSAPP_BUTTONS_LEGAL_RECOVERY_OPTIONS = [
-    "Legal / Recovery Related",
-    "Foreclosure",
-    "Foreclosure Request"
-]
-
 
 CRITICAL_ISSUE_MAPPING = {
     "FCL / SOA / LOD Request": "FCL/SOA/LOD Request (out of TAT)",
     "EMI/ Pre-EMI Related": "EMI/ Pre-EMI Related (payment updation)",
     "Refund": "Refund (advance payment or excess payment)",
-    "CLSS refund related": "CLSS refund related",
-    "Loan Application": "Loan Application related",
+    "Employee misconduct": "Employee misconduct and ROI/tenure miscommunication.",
     "Cibil related": "Cibil related",
-    "Fake signature": "Fake signature",
-    "Misconduct by WHFL": "Misconduct by WHFL employee",
-    "Miscommunication": "Miscommunication about ROI and Tenor"
+    "Amount taken by Employee": "Amount taken by Employee in his bank account",
 }
 
 
 NON_CRITICAL_ISSUE_MAPPING = {
-    "Bounce MEMO": "Bounce Memo Related",
-    "Copy of Insurance policy": "Insurance Policy Copy Request",
-    "Copy of documents": "Documents Copy Request",
-    "Foreclosure request": "Foreclosure Request (Loan Closure Request)",
-    "Tax certificate": "Tax Certificate Request",
-    "List of Documents": "List of Documents Request",
-    "Original property dispatch and NOC": "Original Property Dispatch & NOC Related",
-    "Repayment schedule": "Repayment Schedule Request",
-    "Statement of Account": "Statement of Account (SOA) Request",
-    "Temporary retrieval of property paper": "Temporary Retrieval of Property Papers",
-    "Welcome letter": "Welcome Letter Request",
-    "Loan A/c related": "Loan Account Related Query",
-    "Disbursal Related": "Disbursement Related Query",
-    "Subsidy Related": "Subsidy Related Query",
-    "EMI Related": "EMI Related Query",
-    "Address Change": "Address Change Request",
-    "Foreclosure": "Foreclosure Related Query",
-    "Insurance Refund": "Insurance Refund Related",
-    "Part Payment": "Part Payment Related",
-    "Top up": "Top-Up Loan Related",
-    "Rate of Interest Related": "Rate of Interest (ROI) Related",
-    "Prepayment Related": "Prepayment Related Query",
-    "Legal/Recovery related": "Legal / Recovery Related",
-    "Disbursement related": "Disbursement Related",
-    "Loan Document related": "Loan Document Related",
-    "Presentation of cheque related": "Cheque Presentation Related",
-    "Insurance Related": "Insurance Related Query",
-    "Levy of prepay charges": "Levy of Prepayment Charges",
-    "Loan Cancellation": "Loan Cancellation Request",
-    "Loan Application related": "Loan Application Related",
-    "Processing fees related": "Processing Fees Related"
+    "Others": "Others",
 }
-
-
-
-# =====================================================
-# TWILIO CONFIG
-# =====================================================
-TWILIO_ACCOUNT_SID = "AC34df793595c05125c2acadb0f34c11a7"
-TWILIO_AUTH_TOKEN = "1400334a5628419a650de4119c9dfde1"
-TWILIO_WHATSAPP_FROM = "whatsapp:+14155238886"
-
-# Templates
-TEMPLATE_GREETING = "greeting_message"
-TEMPLATE_FIRST_MAIN_MENU = "template_first_main_menu"
-TEMPLATE_NEW_PROSPECT_MENU = "template_new_prospect_menu"
-TEMPLATE_NEW_PROSPECT_LOAN_TYPE = "template_new_prospect_loan_type"
-TEMPLATE_EMP_TYPE = "template_emp_type"
-EXISTING_LOAN_NUMBER = "existing_loan_number"
-TEMPLATE_EXISTING_MENU = "HXea30645cd1df86fbac076e7c9ad35248"
-TEMPLATE_BRANCH_LOCATOR_LINK = "template_branch_locator_link"
-TEMPLATE_ASSISTANCE_CONFIRMATION = "template_assistance_confirmation"
-typeofsupporttxt = "HX1fe135ceee6af33168656af217069a20"
-criticalsupportissuesmenu = "criticalsupportissuesmenu"
-documentsstatements = "documentsstatements"
-paymentsemimenu = "paymentsemimenu"
-loanaccountservicesmenu = "loanaccountservicesmenu"
-legalrecoverymenu = "legalrecoverymenu"
-changeandresendmenu = "changeandresendmenu"
-chatwithsupportagent = "returntomenu"
-docmenutemplatelistmenu = "docmenutemplatelistmenu "
-returntomenu = "returntomenu"
 
 # =====================================================
 # DATABASE
@@ -180,16 +77,6 @@ returntomenu = "returntomenu"
 client = MongoClient("mongodb+srv://mongodb:mongodb@cluster0.1nfoz.mongodb.net/?retryWrites=true&w=majority")
 db = client["whatsapp_bot"]
 users = db["chat_state"]
-
-
-
-# ==============================
-# 🔐 META CONFIG
-# ==============================
-META_ACCESS_TOKEN = "37a67b134b41144da7cf67f1b3b30cb9"
-PHONE_NUMBER_ID = "102447942486079"
-VERIFY_TOKEN = "EAAqPVXyiYlYBQjJrnMkyOnBOYIVYK6gCYkim4rNZBsu6txriZCPuORYZC8IMPbzsmXZCF3kMbVZB231gz2fqeyMPumnTAPMDE1TTk8ZANeZCug96PdXUoZB1zwkB3H2GKyc5l2QMT21cPwSYytjrD0ejF3vent62u15fLXpzjFanoN0ZBM5ZAmyMIrVFZBP7lxlPBsNvgZDZD"
-META_API_VERSION = "v22.0"
 
 
 PDF_STORAGE_PATH = "/Czentrix/apps/wonder_homes_loan_bot/documents"
@@ -957,6 +844,7 @@ async def chat_process(req: Request):
     csid_data = json.loads(extraParms)
     wa = csid_data.get("identifier")
     cmd = msg.upper()
+    print(msg,"mmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 
     # -------- GLOBAL COMMANDS --------
     if cmd == "RESTART":
@@ -987,7 +875,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1030,6 +918,7 @@ async def chat_process(req: Request):
         return payload
 
     step = user["step"]
+    print(step,"sssssssssssssssssssssssssssssssssssss")
     try:
         tmp_step = user["tmp_step"]
     except:
@@ -1097,7 +986,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1183,7 +1072,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1198,82 +1087,58 @@ async def chat_process(req: Request):
                 "body": [
                     {
                         "type": "TextBlock",
-                        "text": "Thank you for reaching out.\n\nWe have received your request and it has been marked as a critical issue.\n\nOur Support Team will connect with you shortly to assist you further."
+                        "text": "Hi 👋\n\nWe are connecting you to a live agent.\n\nPlease wait for a moment while we transfer your chat.\n\nThank you for your patience 😊"
                     },
-                    {
-                        "type": "Button",
-                        "id": "serviceType",
-                        "style": "expanded",
-                        "choices": [
-                            {
-                                "id": "Contact Us",
-                                "title": "Contact Us",
-                                "value": "Contact Us"
-                            },
-                            {
-                                "id": "Back To Menu",
-                                "title": "Back To Menu",
-                                "value": "Back To Menu"
-                            },
-                            {
-                                "id": "Main Menu",
-                                "title": "Main Menu",
-                                "value": "Main Menu"
-                            }
-                        ]
-                    }
+                    
                 ],
                 "actions": [
-                   
+
                 ]
             }
             return payload
 
-    if step != "DOC_MENU":
-        if (
-            msg in WHATSAPP_DOC_BUTTONS or
-            msg in WHATSAPP_BUTTONS_PAYMENT_EMI or
-            msg in WHATSAPP_BUTTONS_LOAN_SERVICE or
-            msg in WHATSAPP_BUTTONS_LEGAL_RECOVERY_OPTIONS
-        ):
-            non_critical_issue = check_non_critical_issue(msg)
-            if non_critical_issue:
-                save_user(wa, {"step": "SUPPPORT_ISSUE"})
-                payload = {
-                    "type": "adaptiveCard",
-                    "body": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Thank you for reaching out. For assistance with this request, please contact our customer support team at 1800 102 1002 or email us at hello@wonderhfl.com. Our team will be happy to help you."
-                        },
-                        {
-                            "type": "Button",
-                            "id": "serviceType",
-                            "style": "expanded",
-                            "choices": [
-                                {
-                                    "id": "Contact Us",
-                                    "title": "Contact Us",
-                                    "value": "Contact Us"
-                                },
-                                {
-                                    "id": "Back To Menu",
-                                    "title": "Back To Menu",
-                                    "value": "Back To Menu"
-                                },
-                                {
-                                    "id": "Main Menu",
-                                    "title": "Main Menu",
-                                    "value": "Main Menu"
-                                }
-                            ]
-                        }
-                    ],
-                    "actions": [
-                        
-                    ]
-                }
-                return payload
+    # if step != "DOC_MENU":
+    #     if (
+    #         msg in WHATSAPP_DOC_BUTTONS
+    #     ):
+    #         non_critical_issue = check_non_critical_issue(msg)
+    #         if non_critical_issue:
+    #             save_user(wa, {"step": "SUPPPORT_ISSUE"})
+    #             payload = {
+    #                 "type": "adaptiveCard",
+    #                 "body": [
+    #                     {
+    #                         "type": "TextBlock",
+    #                         "text": "Thank you for reaching out. For assistance with this request, please contact our customer support team at 1800 102 1002 or email us at hello@wonderhfl.com. Our team will be happy to help you."
+    #                     },
+    #                     {
+    #                         "type": "Button",
+    #                         "id": "serviceType",
+    #                         "style": "expanded",
+    #                         "choices": [
+    #                             {
+    #                                 "id": "Contact Us",
+    #                                 "title": "Contact Us",
+    #                                 "value": "Contact Us"
+    #                             },
+    #                             {
+    #                                 "id": "Back To Menu",
+    #                                 "title": "Back To Menu",
+    #                                 "value": "Back To Menu"
+    #                             },
+    #                             {
+    #                                 "id": "Main Menu",
+    #                                 "title": "Main Menu",
+    #                                 "value": "Main Menu"
+    #                             }
+    #                         ]
+    #                     }
+    #                 ],
+    #                 "actions": [
+
+    #                 ]
+    #             }
+    #             return payload
 
     if msg == "Main Menu":
         save_user(wa, {"step": "MAIN_MENU", "attempt": 0})
@@ -1313,11 +1178,11 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
-    
+
 
     if msg == "Calculators" and step == "NEW_LOAN_MENU":
         data = send_whatsapp_cta_template(
@@ -1356,7 +1221,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1399,7 +1264,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1458,7 +1323,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1522,7 +1387,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1566,7 +1431,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1609,7 +1474,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1653,7 +1518,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1698,7 +1563,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1742,7 +1607,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1785,7 +1650,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1850,7 +1715,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1898,7 +1763,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -1961,19 +1826,24 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
 
-    if msg == "Customer Support" and step != "Back To Menu":
+    if msg == "Back To Menu" and step == "CRITCAL_CASE":
+        data = send_whatsapp_cta_template(
+            wa,
+            "fqa_wonder_home"
+        )
+        time.sleep(2)
         save_user(wa, {"step": "CUSTOMER_SUPPORT"})
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": "Welcome to Wonder Home Finance Support.\n\nPlease select the loan category you would like assistance with. Our team is here to help you with complete information related to your home loan queries."
+                    "text": "Do you need any further assistance?\n\nPlease select an option below:"
                 },
                 {
                     "type": "Button",
@@ -1981,30 +1851,94 @@ async def chat_process(req: Request):
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Balance Transfer",
-                            "title": "Balance Transfer",
-                            "value": "Balance Transfer"
+                            "id": "Yes",
+                            "title": "Yes",
+                            "value": "Yes"
                         },
                         {
-                            "id": "Home Construction Loan",
-                            "title": "Home Construction Loan",
-                            "value": "Home Construction Loan"
+                            "id": "No",
+                            "title": "No",
+                            "value": "No"
                         },
                         {
-                            "id": "Home Extension Loan",
-                            "title": "Home Extension Loan",
-                            "value": "Home Extension Loan"
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
                         },
                         {
-                            "id": "Home Loan General",
-                            "title": "Home Loan General",
-                            "value": "Home Loan General"
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
+                }
+            ],
+            "actions": [
+            ]
+        }
+        return payload
+
+    if msg == "Customer Support" and step != "Back To Menu":
+        data = send_whatsapp_cta_template(
+            wa,
+            "fqa_wonder_home"
+        )
+        time.sleep(2)
+        save_user(wa, {"step": "CUSTOMER_SUPPORT"})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Do you need any further assistance?\n\nPlease select an option below:"
+                },
+                {
+                    "type": "Button",
+                    "id": "faqCategory",
+                    "style": "expanded",
+                    "choices": [
+                        {
+                            "id": "Yes",
+                            "title": "Yes",
+                            "value": "Yes"
                         },
                         {
-                            "id": "Home Renovation Loan",
-                            "title": "Home Renovation Loan",
-                            "value": "Home Renovation Loan"
+                            "id": "No",
+                            "title": "No",
+                            "value": "No"
                         },
+                        {
+                            "id": "Back To Menu",
+                            "title": "Back To Menu",
+                            "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
+                        }
+                    ]
+                }
+            ],
+            "actions": [
+            ]
+        }
+        return payload
+
+    if == step == "CUSTOMER_SUPPORT" and msg == "No":
+        save_user(wa, {"step": "CRITCAL_CASE"})
+        payload = {
+            "type": "adaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
+                },
+                {
+                    "type": "Button",
+                    "id": "serviceType",
+                    "style": "expanded",
+                    "choices": [
                         {
                             "id": "Contact Us",
                             "title": "Contact Us",
@@ -2014,12 +1948,17 @@ async def chat_process(req: Request):
                             "id": "Back To Menu",
                             "title": "Back To Menu",
                             "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
                         }
                     ]
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -2048,7 +1987,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -2082,13 +2021,13 @@ async def chat_process(req: Request):
                             "type": "TextBlock",
                             "text": "Please enter your valid 10-digit mobile number to continue with the verification process."
                         }
-                        
+
                     ],
                     "actions": [
                     ]
             }
             return payload
-            
+
 
         if msg == "Change Number" and step == "OTP_FAILED_MENU":
             save_user(wa, {"step": "ASK_MOBILE", "attempt": 0})
@@ -2238,7 +2177,7 @@ async def chat_process(req: Request):
             }
 
             return payload
-        
+
         return {
                 "type": "adaptiveCard",
                 "body": [
@@ -2359,7 +2298,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    
+
                 ]
             }
             return payload
@@ -2512,7 +2451,9 @@ async def chat_process(req: Request):
 
             pdf_url = f"https://api-retriever-bitnet.c-zentrix.com/download/cibil?file={filename}"
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,filename)
-
+            loan_data = {
+                    "operationStatus": "1"
+            }
             if loan_data["operationStatus"] == "1":
                 res = get_all_loan("8076893187")
                 reply_text,customerName = format_loans_for_whatsapp(res)
@@ -2602,14 +2543,14 @@ async def chat_process(req: Request):
             }
             return payload
 
-    if step == "CRITCAL_CASE" and msg == "More Option":
+    if step == "CRITCAL_CASE" and msg == "Others":
         save_user(wa, {"step": "CRITCAL_CASE"})
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": "Welcome to Wonder Home Finance Customer Support.\n\nPlease select the service request that best matches your concern. Our support team will assist you accordingly."
+                    "text": "Thank you for reaching out.\n\nFor assistance with this request, please contact our customer support team at 1800 102 1002 or email us at hello@wonderhfl.com.\n\nOur team will be happy to help you."
                 },
                 {
                     "type": "Button",
@@ -2625,11 +2566,6 @@ async def chat_process(req: Request):
                             "id": "Miscommunication",
                             "title": "Miscommunication",
                             "value": "Miscommunication"
-                        },
-                        {
-                            "id": "More Option",
-                            "title": "More Option",
-                            "value": "More Option"
                         },
                         {
                             "id": "Back To Menu",
@@ -2648,7 +2584,8 @@ async def chat_process(req: Request):
         }
         return payload
 
-    if step == "CUSTOMER_ASS" and msg == "Critical cases":
+    #if step == "CUSTOMER_ASS" and msg == "Critical cases":
+    if step == "CUSTOMER_SUPPORT" and msg == "Yes":
         save_user(wa, {"step": "CRITCAL_CASE"})
         payload = {
             "type": "adaptiveCard",
@@ -2678,14 +2615,9 @@ async def chat_process(req: Request):
                             "value": "Refund"
                         },
                         {
-                            "id": "CLSS refund related",
-                            "title": "CLSS Refund Related",
-                            "value": "CLSS refund related"
-                        },
-                        {
-                            "id": "Loan Application",
-                            "title": "Loan Application",
-                            "value": "Loan Application"
+                            "id": "Employee misconduct",
+                            "title": "Employee misconduct",
+                            "value": "Employee misconduct"
                         },
                         {
                             "id": "Cibil related",
@@ -2693,81 +2625,14 @@ async def chat_process(req: Request):
                             "value": "Cibil related"
                         },
                         {
-                            "id": "Fake signature",
-                            "title": "Fake Signature",
-                            "value": "Fake signature"
+                            "id": "Amount taken",
+                            "title": "Amount taken",
+                            "value": "Amount taken"
                         },
                         {
-                            "id": "More Option",
-                            "title": "More Option",
-                            "value": "More Option"
-                        },
-                        {
-                            "id": "Back To Menu",
-                            "title": "Back To Menu",
-                            "value": "Back To Menu"
-                        },
-                        {
-                            "id": "Main Menu",
-                            "title": "Main Menu",
-                            "value": "Main Menu"
-                        }
-                    ]
-                }
-            ],
-            "actions": [
-            ]
-        }
-        return payload
-
-    if step == "CUSTOMER_ASS" and msg == "Non-critical cases":
-        save_user(wa, {"step": "NON_CRITCAL_CASE"})
-        payload = {
-            "type": "adaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Please select the document or service request you would like to proceed with."
-                },
-                {
-                    "type": "Button",
-                    "id": "documentRequest",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                            "id": "Bounce Memo",
-                            "title": "Bounce Memo",
-                            "value": "Bounce Memo"
-                        },
-                        {
-                            "id": "Copy of Insurance Policy",
-                            "title": "Copy of Insurance Policy",
-                            "value": "Copy of Insurance Policy"
-                        },
-                        {
-                            "id": "Copy of Documents",
-                            "title": "Copy of Documents",
-                            "value": "Copy of Documents"
-                        },
-                        {
-                            "id": "List of Documents",
-                            "title": "List of Documents",
-                            "value": "List of Documents"
-                        },
-                        {
-                            "id": "Statement of Account",
-                            "title": "Statement of Account",
-                            "value": "Statement of Account"
-                        },
-                        {
-                            "id": "Repayment Schedule",
-                            "title": "Repayment Schedule",
-                            "value": "Repayment Schedule"
-                        },
-                        {
-                            "id": "More Option",
-                            "title": "More Option",
-                            "value": "More Option"
+                            "id": "Others",
+                            "title": "Others",
+                            "value": "Others"
                         },
                         {
                             "id": "Back To Menu",
@@ -2785,118 +2650,16 @@ async def chat_process(req: Request):
             "actions": [
             ]
         }
-
-        return payload
-    # =====================================================
-    # CUSTOMER SUPPORT LOGIC
-    # =====================================================
-    if step in ["Balance_Transfer","Home_Construction_Loan","Home_Extension_Loan","Home_Loan_General","Home_Renovation_Loan"] and  msg == "Yes":
-        save_user(wa, {"step": "CUSTOMER_ASS"})
-        payload = {
-            "type": "adaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!\n\nPlease select a loan option below to proceed."
-                },
-                {
-                    "type": "Button",
-                    "id": "serviceType",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                            "id": "Critical cases",
-                            "title": "Critical cases",
-                            "value": "Critical cases"
-                        },
-                        {
-                            "id": "Non-critical cases",
-                            "title": "Non-critical cases",
-                            "value": "Non-critical cases"
-                        }
-                    ]
-                }
-            ],
-            "actions": [
-            ]
-        }
         return payload
 
-    if step in ["Balance_Transfer","Home_Construction_Loan","Home_Extension_Loan","Home_Loan_General","Home_Renovation_Loan"] and msg == "No":
-        reset_flow(wa)
-        payload = {
-            "type": "adaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!"
-                },
-                {
-                    "type": "Button",
-                    "id": "serviceType",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                            "id": "Main Menu",
-                            "title": "Main Menu",
-                            "value": "Main Menu"
-                        }
-                    ]
-                }
-            ],
-            "actions": [
-            ]
-        }
-        return payload
 
     if msg in ["Balance Transfer","Home Construction Loan","Home Extension Loan","Home Loan General","Home Renovation Loan"] and step == "CUSTOMER_SUPPORT":
-        if msg == "Balance Transfer":
-            save_user(wa, {"step": "Balance_Transfer"})
-            FAQ_1 = "**Q. What is Home Loan Balance Transfer?**\n\n" \
-            "Ans. Home Loan Balance Transfer is a facility that allows you to transfer your existing home loan from your current bank to Wonder Home Finance. This helps you enjoy lower EMIs and savings.\n\n" \
-            "**Q. Can I transfer my home loan from any lender?**\n\n" \
-            "Ans. Yes. You can transfer your home loan or loan against property from any lender, subject to eligibility.\n\n" \
-            "**Q. Can I opt for a top-up loan during the balance transfer?**\n\n" \
-            "Ans. Yes. You can avail a top-up loan to access additional funds."
-        elif msg == "Home Construction Loan":
-            save_user(wa, {"step": "Home_Construction_Loan"})
-            FAQ_1 = "**Q. What is Home Loan Balance Transfer?**\n\n" \
-            "Ans. Home Loan Balance Transfer is a facility that allows you to transfer your existing home loan from your current bank to Wonder Home Finance. This helps you enjoy lower EMIs and savings.\n\n" \
-            "**Q. Can I transfer my home loan from any lender?**\n\n" \
-            "Ans. Yes. You can transfer your home loan or loan against property from any lender, subject to eligibility.\n\n" \
-            "**Q. Can I opt for a top-up loan during the balance transfer?**\n\n" \
-            "Ans. Yes. You can avail a top-up loan to access additional funds."
-        elif msg == "Home Extension Loan":
-            save_user(wa, {"step": "Home_Extension_Loan"})
-            FAQ_1 = "**Q. What is Home Loan Balance Transfer?**\n\n" \
-            "Ans. Home Loan Balance Transfer is a facility that allows you to transfer your existing home loan from your current bank to Wonder Home Finance. This helps you enjoy lower EMIs and savings.\n\n" \
-            "**Q. Can I transfer my home loan from any lender?**\n\n" \
-            "Ans. Yes. You can transfer your home loan or loan against property from any lender, subject to eligibility.\n\n" \
-            "**Q. Can I opt for a top-up loan during the balance transfer?**\n\n" \
-            "Ans. Yes. You can avail a top-up loan to access additional funds."
-        elif msg == "Home Loan General":
-            save_user(wa, {"step": "Home_Loan_General"})
-            FAQ_1 = "**Q. What is Home Loan Balance Transfer?**\n\n" \
-            "Ans. Home Loan Balance Transfer is a facility that allows you to transfer your existing home loan from your current bank to Wonder Home Finance. This helps you enjoy lower EMIs and savings.\n\n" \
-            "**Q. Can I transfer my home loan from any lender?**\n\n" \
-            "Ans. Yes. You can transfer your home loan or loan against property from any lender, subject to eligibility.\n\n" \
-            "**Q. Can I opt for a top-up loan during the balance transfer?**\n\n" \
-            "Ans. Yes. You can avail a top-up loan to access additional funds."
-        elif msg == "Home Renovation Loan":
-            save_user(wa, {"step": "Home_Renovation_Loan"})
-            FAQ_1 = "**Q. What is Home Loan Balance Transfer?**\n\n" \
-            "Ans. Home Loan Balance Transfer is a facility that allows you to transfer your existing home loan from your current bank to Wonder Home Finance. This helps you enjoy lower EMIs and savings.\n\n" \
-            "**Q. Can I transfer my home loan from any lender?**\n\n" \
-            "Ans. Yes. You can transfer your home loan or loan against property from any lender, subject to eligibility.\n\n" \
-            "**Q. Can I opt for a top-up loan during the balance transfer?**\n\n" \
-            "Ans. Yes. You can avail a top-up loan to access additional funds."
-
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": f"{FAQ_1}\n\nWe hope your query has been addressed.\n\nIf you need any further assistance, please select *Yes*.\n\nThank you for choosing Wonder Home Finance."
+                    "text": f"We hope your query has been addressed.\n\nIf you need any further assistance, please select *Yes*.\n\nThank you for choosing Wonder Home Finance."
                 },
                 {
                     "type": "Button",
@@ -2981,7 +2744,6 @@ async def chat_process(req: Request):
                 ]
             }
             return payload
-            # return {"reply": "Please enter your full name", "flag": False}
 
         if msg == "BACK TO MENU":
             save_user(wa, {"step": "MAIN_MENU"})
@@ -3140,6 +2902,7 @@ async def chat_process(req: Request):
             tmp_data = send_cibil_pdf_whatsapp(wa, pdf_url,cibil_report)
 
             save_user(wa, {"step": "MAIN_MENU"})
+            time.sleep(2)
             # delete_pdf_file(cibil_report)
             payload = {
                 "type": "adaptiveCard",
@@ -3220,16 +2983,21 @@ async def chat_process(req: Request):
             "actions": []
             }
             return payload
-           
+
 
     if step == "MAIN_MENU" and msg == "Customer Support":
+        data = send_whatsapp_cta_template(
+            wa,
+            "fqa_wonder_home"
+        )
+        time.sleep(2)
         save_user(wa, {"step": "CUSTOMER_SUPPORT"})
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": "Welcome to Wonder Home Finance Support.\n\nPlease select the loan category you would like assistance with. Our team is here to help you with complete information related to your home loan queries."
+                    "text": "Do you need any further assistance?\n\nPlease select an option below:"
                 },
                 {
                     "type": "Button",
@@ -3237,39 +3005,24 @@ async def chat_process(req: Request):
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Balance Transfer",
-                            "title": "Balance Transfer",
-                            "value": "Balance Transfer"
+                            "id": "Yes",
+                            "title": "Yes",
+                            "value": "Yes"
                         },
                         {
-                            "id": "Home Construction Loan",
-                            "title": "Home Construction Loan",
-                            "value": "Home Construction Loan"
-                        },
-                        {
-                            "id": "Home Extension Loan",
-                            "title": "Home Extension Loan",
-                            "value": "Home Extension Loan"
-                        },
-                        {
-                            "id": "Home Loan General",
-                            "title": "Home Loan General",
-                            "value": "Home Loan General"
-                        },
-                        {
-                            "id": "Home Renovation Loan",
-                            "title": "Home Renovation Loan",
-                            "value": "Home Renovation Loan"
-                        },
-                        {
-                            "id": "Contact Us",
-                            "title": "Contact Us",
-                            "value": "Contact Us"
+                            "id": "No",
+                            "title": "No",
+                            "value": "No"
                         },
                         {
                             "id": "Back To Menu",
                             "title": "Back To Menu",
                             "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
                         }
                     ]
                 }
@@ -3322,13 +3075,18 @@ async def chat_process(req: Request):
         return payload
 
     if step == "EC_MENU" and msg == "Customer Support":
+        data = send_whatsapp_cta_template(
+            wa,
+            "fqa_wonder_home"
+        )
+        time.sleep(2)
         save_user(wa, {"step": "CUSTOMER_SUPPORT"})
         payload = {
             "type": "adaptiveCard",
             "body": [
                 {
                     "type": "TextBlock",
-                    "text": "Welcome to Wonder Home Finance Support.\n\nPlease select the loan category you would like assistance with. Our team is here to help you with complete information related to your home loan queries."
+                    "text": "Do you need any further assistance?\n\nPlease select an option below:"
                 },
                 {
                     "type": "Button",
@@ -3336,39 +3094,24 @@ async def chat_process(req: Request):
                     "style": "expanded",
                     "choices": [
                         {
-                            "id": "Balance Transfer",
-                            "title": "Balance Transfer",
-                            "value": "Balance Transfer"
+                            "id": "Yes",
+                            "title": "Yes",
+                            "value": "Yes"
                         },
                         {
-                            "id": "Home Construction Loan",
-                            "title": "Home Construction Loan",
-                            "value": "Home Construction Loan"
-                        },
-                        {
-                            "id": "Home Extension Loan",
-                            "title": "Home Extension Loan",
-                            "value": "Home Extension Loan"
-                        },
-                        {
-                            "id": "Home Loan General",
-                            "title": "Home Loan General",
-                            "value": "Home Loan General"
-                        },
-                        {
-                            "id": "Home Renovation Loan",
-                            "title": "Home Renovation Loan",
-                            "value": "Home Renovation Loan"
-                        },
-                        {
-                            "id": "Contact Us",
-                            "title": "Contact Us",
-                            "value": "Contact Us"
+                            "id": "No",
+                            "title": "No",
+                            "value": "No"
                         },
                         {
                             "id": "Back To Menu",
                             "title": "Back To Menu",
                             "value": "Back To Menu"
+                        },
+                        {
+                            "id": "Main Menu",
+                            "title": "Main Menu",
+                            "value": "Main Menu"
                         }
                     ]
                 }
@@ -3511,94 +3254,6 @@ async def chat_process(req: Request):
         }
         return payload
 
-    if step == "CUSTOMER_ASS" and msg == "Back To Menu":
-        save_user(wa, {"step": "CUSTOMER_SUPPORT"})
-        payload = {
-            "type": "adaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Welcome to Wonder Home Finance Support.\n\nPlease select the loan category you would like assistance with. Our team is here to help you with complete information related to your home loan queries."
-                },
-                {
-                    "type": "Button",
-                    "id": "faqCategory",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                            "id": "Balance Transfer",
-                            "title": "Balance Transfer",
-                            "value": "Balance Transfer"
-                        },
-                        {
-                            "id": "Home Construction Loan",
-                            "title": "Home Construction Loan",
-                            "value": "Home Construction Loan"
-                        },
-                        {
-                            "id": "Home Extension Loan",
-                            "title": "Home Extension Loan",
-                            "value": "Home Extension Loan"
-                        },
-                        {
-                            "id": "Home Loan General",
-                            "title": "Home Loan General",
-                            "value": "Home Loan General"
-                        },
-                        {
-                            "id": "Home Renovation Loan",
-                            "title": "Home Renovation Loan",
-                            "value": "Home Renovation Loan"
-                        },
-                        {
-                            "id": "Contact Us",
-                            "title": "Contact Us",
-                            "value": "Contact Us"
-                        },
-                        {
-                            "id": "Back To Menu",
-                            "title": "Back To Menu",
-                            "value": "Back To Menu"
-                        }
-                    ]
-                }
-            ],
-            "actions": [
-            ]
-        }
-        return payload
-
-    if step == "CRITCAL_CASE" and msg == "Back To Menu":
-        save_user(wa, {"step": "CUSTOMER_ASS"})
-        payload = {
-            "type": "adaptiveCard",
-            "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Thank you for connecting with Wonder Home Finance!\n\nIf you need any further assistance, feel free to reach out. Wishing you a wonderful day!\n\nPlease select a loan option below to proceed."
-                },
-                {
-                    "type": "Button",
-                    "id": "serviceType",
-                    "style": "expanded",
-                    "choices": [
-                        {
-                            "id": "Critical cases",
-                            "title": "Critical cases",
-                            "value": "Critical cases"
-                        },
-                        {
-                            "id": "Non-critical cases",
-                            "title": "Non-critical cases",
-                            "value": "Non-critical cases"
-                        }
-                    ]
-                }
-            ],
-            "actions": [
-            ]
-        }
-        return payload
 
     if step == "SUPPPORT_ISSUE" and msg == "Back To Menu":
         save_user(wa, {"step": "CUSTOMER_ASS"})
@@ -3630,14 +3285,9 @@ async def chat_process(req: Request):
                             "value": "Refund"
                         },
                         {
-                            "id": "CLSS refund related",
-                            "title": "CLSS Refund Related",
-                            "value": "CLSS refund related"
-                        },
-                        {
-                            "id": "Loan Application",
-                            "title": "Loan Application",
-                            "value": "Loan Application"
+                            "id": "Employee misconduct",
+                            "title": "Employee misconductn",
+                            "value": "Employee misconduct"
                         },
                         {
                             "id": "Cibil related",
@@ -3645,14 +3295,14 @@ async def chat_process(req: Request):
                             "value": "Cibil related"
                         },
                         {
-                            "id": "Fake signature",
-                            "title": "Fake Signature",
-                            "value": "Fake signature"
+                            "id": "Amount taken by Employee",
+                            "title": "Amount taken by Employee",
+                            "value": "Amount taken by Employee"
                         },
                         {
-                            "id": "More Option",
-                            "title": "More Option",
-                            "value": "More Option"
+                            "id": "Others",
+                            "title": "Others",
+                            "value": "Others"
                         },
                         {
                             "id": "Back To Menu",
@@ -3820,7 +3470,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -3859,7 +3509,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -3907,7 +3557,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -3951,7 +3601,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
 
@@ -3996,7 +3646,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
 
@@ -4041,7 +3691,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -4084,7 +3734,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -4127,7 +3777,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -4195,7 +3845,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    
+
                 ]
             }
 
@@ -4227,7 +3877,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                
+
             ]
             }
 
@@ -4268,7 +3918,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -4313,7 +3963,7 @@ async def chat_process(req: Request):
                 }
             ],
             "actions": [
-                
+
             ]
         }
         return payload
@@ -4363,7 +4013,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                    
+
             ]
             }
             return payload
@@ -4399,7 +4049,7 @@ async def chat_process(req: Request):
                     }
                 ],
                 "actions": [
-                
+
             ]
             }
             return payload
@@ -4527,7 +4177,7 @@ async def chat_process(req: Request):
             }
         ],
         "actions": [
-            
+
         ]
     }
     return payload
