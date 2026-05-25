@@ -1,0 +1,19 @@
+Changelog – Telephony Dashboard Patch
+Date: 12-03-2026
+Author: Mohammad Monish
+
+Enhancements:
+- Added Agent-wise filter on Telephony Dashboard for better data filtering.
+- Added Skill-wise filter to allow users to view data based on selected skills.
+- Added List Name-wise filter to refine dashboard data visibility.
+- Improved dashboard data filtration functionality for better analysis.
+
+Changelog – Telephony Dashboard Patch
+Date: 30-03-2026
+Author: Mohammad Monish
+
+Enhancements:
+- Improved dashboard data filtration functionality for better analysis.
+- In the Telephony Dashboard, added an agent-wise filter along with the total call count.
+- In the Campaign Details Dashboard, the "Today" option was not available in the date filter. This has now been updated.
+- In the Agent Details Dashboard, the "Today" option was not available in the date filter. This has now been updated.

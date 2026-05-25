@@ -1,5 +1,5 @@
 # Import configuration settings from the 'settings' module
-from settings import camp_api_url, main_log_path, login_url, filter_path, download_csv_row_data, dashboard_reload_time,api_end_url,logo_url
+from settings import camp_api_url, main_log_path, login_url, filter_path, download_csv_row_data, dashboard_reload_time,api_end_url,agent_list_api_url,skill_list_api_url,list_name_api_url
 from campaign_details_dashboard_main import main as cmp_details_main
 from agent_details_dashboard_main import main as agent_details_main
 
@@ -15,6 +15,7 @@ import logging  # Module for logging messages
 import json  # Module for working with JSON data
 import os  # Module for interacting with the operating system
 import base64
+import pandas as pd
 
 
 # Setting up logging to track the program's execution
@@ -38,6 +39,34 @@ st.set_page_config(
     initial_sidebar_state='collapsed'  # Set the initial state of the sidebar to collapsed
 )
 
+# Custom CSS to float all download buttons to the right and align them nicely at the top right of each graph card
+st.markdown("""
+<style>
+.main div[data-testid="stDownloadButton"] {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 999;
+}
+.main div[data-testid="stDownloadButton"] button {
+    padding: 3px 12px !important;
+    font-size: 11px !important;
+    height: auto !important;
+    min-height: 0px !important;
+    background-color: transparent !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    color: inherit !important;
+}
+.main div[data-testid="stDownloadButton"] button:hover {
+    border-color: #0a72c2 !important;
+    color: #0a72c2 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Include Font Awesome CSS for icons
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">', unsafe_allow_html=True)
 
@@ -48,7 +77,7 @@ st.markdown('<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.
 st.markdown(
     f"""
         <div class="test12" id="dashboard_data">
-            <img src={logo_url} style="width: 110px;">
+            <img src="https://stg.c-zentrix.com/images/C-Zentrix-logo-white.png" style="width: 110px;">
         </div>
     """,
     unsafe_allow_html=True,
@@ -96,7 +125,7 @@ def access_url_parm():
                     # Reverse the character encoding by subtracting the key
                     decoded_char = chr(byte - key_cypher)
                     decoded_string += decoded_char
-            
+
             decoded_string = json.loads(decoded_string)
 
 
@@ -128,13 +157,15 @@ def access_url_parm():
                 if status == "SUCCESS":
                     # If the status is "SUCCESS", extract the campaign names
                     campaigns_str = parsed_data['data']['campaigns']
-                    campaign_names_list = [name.strip() for name in campaigns_str.split(',')]  # Split and clean the campaign names
+                    campaign_names_list = [name.strip() for name in campaigns_str.split(',')]# Split and clean the campaign names
+                    campaign_names_list.insert(0, "ALL")  # Add ALL at first position
+                    # print(campaign_names_list)
                 else:
-                    campaign_names_list = []  # If status is not "SUCCESS", set an empty list for campaign names
+                    campaign_names_list = ["ALL"]  # If status is not "SUCCESS", set an empty list for campaign names
                 return campaign_names_list, status, session, username  # Return the campaign names, status, session, and username
             else:
                 # If the response is empty, set default values
-                campaign_names_list = []
+                campaign_names_list = ["ALL"]
                 status = "SUCCESS"
                 session = ""
                 username = ""
@@ -142,7 +173,7 @@ def access_url_parm():
         else:
             campaign_names_list = None
             status = None
-            session = None 
+            session = None
             username = None
             return campaign_names_list, status, session, username  # Return the default values
 
@@ -151,6 +182,85 @@ def access_url_parm():
         # Log any exceptions that occur and print the stack trace
         log.error(str(err))
         traceback.print_exc()
+
+def tmp_agent_list(selected_campaign_name):
+    payload = {
+        "selected_campaign_name": f"{selected_campaign_name}"
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    try:
+        # Send POST request
+        response = requests.post(agent_list_api_url, json=payload, headers=headers)
+
+        # Convert response to JSON
+        data = response.json()
+
+        # Extract agent_id list
+        agent_list = data.get("data", ["ALL"])
+
+        return agent_list
+
+    except Exception as e:
+        log.error(str(e))
+        traceback.print_exc()
+        return ["ALL"]
+
+def tmp_list_name(selected_campaign_name,):
+    payload = {
+        "selected_campaign_name": f"{selected_campaign_name}"
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    try:
+        # Send POST request
+        response = requests.post(list_name_api_url, json=payload, headers=headers)
+
+        # Convert response to JSON
+        data = response.json()
+
+        # Extract agent_id list
+        agent_list = data.get("data", ["ALL"])
+
+        return agent_list
+
+    except Exception as e:
+        log.error(str(e))
+        traceback.print_exc()
+        return ["ALL"]
+
+
+def tmp_skill_list(selected_campaign_name,):
+    payload = {
+        "selected_campaign_name": f"{selected_campaign_name}"
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    try:
+        # Send POST request
+        response = requests.post(skill_list_api_url, json=payload, headers=headers)
+
+        # Convert response to JSON
+        data = response.json()
+
+        # Extract agent_id list
+        agent_list = data.get("data", ["ALL"])
+
+        return agent_list
+
+    except Exception as e:
+        log.error(str(e))
+        traceback.print_exc()
+        return ["ALL"]
 
 
 def dashboard_list():
@@ -177,7 +287,7 @@ def dashboard_list():
                     st.session_state.selected_dashboard = "agent_dashboard"
 
             # Return current selected dashboard value from session state
-            #return "agent_dashboard" 
+            #return "agent_dashboard"
             return st.session_state.selected_dashboard
 
     except Exception as err:
@@ -199,13 +309,15 @@ def sidebar_filter(campaign_names_list):
     """
     try:
         # Create a dropdown (selectbox) with the list of campaign names
-        selected_campaign_name = st.selectbox("Select Campaign Name", campaign_names_list)
-        # Return the selected campaign name
+        selected_campaign_name = st.multiselect("Select Campaign Name", campaign_names_list,default=["ALL"])
+        # Format the selected list to a scalar string format compatible with pandas and backend APIs
+        
         return selected_campaign_name
     except Exception as err:
         # Log any exceptions that occur and print the stack trace
         log.error(str(err))
         traceback.print_exc()
+        return "ALL"
 
 
 def campaign_type_filter():
@@ -225,6 +337,76 @@ def campaign_type_filter():
         selected_campaign_type = st.selectbox("Select Campaign Type", campaign_type_list)
         # Return the selected campaign type
         return selected_campaign_type
+    except Exception as err:
+        # Log any exceptions that occur and print the stack trace
+        log.error(str(err))
+        traceback.print_exc()
+
+def agent_filter(selected_campaign_name):
+    """
+    Display a sidebar filter with a dropdown menu to select a campaign type.
+
+    Returns:
+        str: The selected campaign type from the dropdown.
+    """
+    try:
+        # List of campaign types to be displayed in the dropdown
+        agent_list = tmp_agent_list(selected_campaign_name)
+
+        # Create a sidebar in the Streamlit app
+        #with st.sidebar:
+        # Create a dropdown (selectbox) with the list of agent list
+        selected_agent = st.selectbox("Select Agent", agent_list)
+        # Return the selected agent
+        return selected_agent
+    except Exception as err:
+        # Log any exceptions that occur and print the stack trace
+        log.error(str(err))
+        traceback.print_exc()
+
+
+def skill_list(selected_campaign_name):
+    """
+    Display a sidebar filter with a dropdown menu to select a campaign type.
+
+    Returns:
+        str: The selected campaign type from the dropdown.
+    """
+    try:
+        # List of campaign types to be displayed in the dropdown
+        # skills_list = ["ALL", "Testing_Skill"]
+        skills_list = tmp_skill_list(selected_campaign_name)
+
+        # Create a sidebar in the Streamlit app
+        #with st.sidebar:
+        # Create a dropdown (selectbox) with the list of agent list
+        selected_skill_name = st.selectbox("Select Skill", skills_list)
+        # Return the selected agent
+        return selected_skill_name
+    except Exception as err:
+        # Log any exceptions that occur and print the stack trace
+        log.error(str(err))
+        traceback.print_exc()
+
+
+def list_name_list(selected_campaign_name):
+    """
+    Display a sidebar filter with a dropdown menu to select a campaign type.
+
+    Returns:
+        str: The selected campaign type from the dropdown.
+    """
+    try:
+        # List of campaign types to be displayed in the dropdown
+        # list_name = ["ALL", "Test_INBOUND"]
+        list_name = tmp_list_name(selected_campaign_name)
+
+        # Create a sidebar in the Streamlit app
+        #with st.sidebar:
+        # Create a dropdown (selectbox) with the list of agent list
+        selected_list_name = st.selectbox("Select List", list_name)
+        # Return the selected agent
+        return selected_list_name
     except Exception as err:
         # Log any exceptions that occur and print the stack trace
         log.error(str(err))
@@ -329,14 +511,17 @@ def filter_for_date_wise(selected_campaign_name):
         traceback.print_exc()
 
 
-def send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type):
+def send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type,selected_agent_filter,selected_skills_name, selected_list_name):
     # The payload (data) to be sent in the request body
     data = {
         "selected_campaign_name": selected_campaign_name,
         "start_date": str(start_date),
         "end_date": str(end_date),
         "selected_filter_name": selected_filter_name,
-        "selected_campaign_type": selected_campaign_type
+        "selected_campaign_type": selected_campaign_type,
+        "selected_agent_filter": selected_agent_filter,
+        "selected_skills_name": selected_skills_name,
+        "selected_list_name": selected_list_name
     }
 
 
@@ -423,20 +608,35 @@ def sidebar_date_picker(selected_campaign_name):
 def select_box(campaign_names_list):
     try:
        #sidebar_date_picker(selected_campaign_name)
-       col1, col2, col3, col4 = st.columns(4)
+       col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
        # Create a sidebar with a select box to choose the filter
        with col1:
-           selected_campaign_name = sidebar_filter(campaign_names_list)
+           selected_campaign_name_raw = sidebar_filter(campaign_names_list)
+           # Format the selected list to a scalar string format compatible with pandas and backend APIs
+           if isinstance(selected_campaign_name_raw, list):
+               if selected_campaign_name_raw == ["ALL"]:
+                   selected_campaign_name = "ALL"
+               else:
+                   selected_campaign_name = ",".join([str(c) for c in selected_campaign_name_raw if c != "ALL"])
+           else:
+               selected_campaign_name = selected_campaign_name_raw
+           st.session_state["selected_campaign_name"] = selected_campaign_name
        with col2:
            selected_campaign_type = campaign_type_filter()
        with col3:
+           selected_agent_filter = agent_filter(selected_campaign_name)
+       with col4:
+           selected_skills_name = skill_list(selected_campaign_name)
+       with col5:
+           selected_list_name = list_name_list(selected_campaign_name)
+       with col6:
            start_date, end_date, choose_analytics, selected_filter_name = filter_for_date_wise(selected_campaign_name)
            if selected_filter_name == "Customize Date":
-               with col4:
+               with col7:
                    start_date, end_date, choose_analytics = sidebar_date_picker(selected_campaign_name)
 
-       return selected_campaign_name,selected_campaign_type,start_date, end_date, choose_analytics, selected_filter_name
+       return selected_campaign_name,selected_agent_filter,selected_campaign_type,start_date, end_date, choose_analytics, selected_filter_name, selected_skills_name, selected_list_name
     except Exception as err:
         # Log any errors that occur and print the stack trace for debugging
         log.error(str(err))
@@ -496,7 +696,7 @@ def metric_graphs_average(
         # Display average wait time
         with total2:
             average_wait_time = average_wait_time_dict.get('average_wait_time', 'N/A')
-            
+
             handling_time = datetime.strptime(average_wait_time, "%H:%M:%S") - datetime(1900, 1, 1)
 
             five_minutes = timedelta(minutes=1)
@@ -586,7 +786,7 @@ def metric_graphs_average(
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
-                
+
     except Exception as err:
         # Log any errors that occur and print the stack trace for debugging
         log.error(str(err))
@@ -642,7 +842,7 @@ def metric_graphs_rate_call(
 
         # Display call back scheduled count
         with total2:
-            call_back_Scheduled = call_back_Scheduled_dict.get('next_call_time', 'N/A')
+            call_back_Scheduled = call_back_Scheduled_dict.get('next_call_time', '0')
             # Use st.markdown to create HTML content with the icon
             st.markdown(f"""
                 <div class="sm-grids-org">
@@ -657,14 +857,16 @@ def metric_graphs_rate_call(
         # Display either the longest wait time or total answered calls based on the filter
         with total3:
             if selected_filter_name == "Today":
-                title = "Longest Wait Time"
-                try:
-                    tmp_value = agent_ideal_time_dict.get('agent_ideal_time', '00:00:00')
-                except:
-                    tmp_value = "00:00:00"
+                title = "Total Answered Call"
+                tmp_value = total_answered_call_dict.get('total_answered_call', '0')
+                # title = "Longest Wait Time"
+                # try:
+                #     tmp_value = agent_ideal_time_dict.get('agent_ideal_time', '00:00:00')
+                # except:
+                #     tmp_value = "00:00:00"
             else:
                 title = "Total Answered Call"
-                tmp_value = total_answered_call_dict.get('total_answered_call', 'N/A')
+                tmp_value = total_answered_call_dict.get('total_answered_call', '0')
 
             # Use st.markdown to create HTML content with the icon
             st.markdown(f"""
@@ -679,7 +881,7 @@ def metric_graphs_rate_call(
 
         # Display average queue time
         with total4:
-            average_queue_time = average_queue_time_dict.get('average_queue_time', 'N/A')
+            average_queue_time = average_queue_time_dict.get('average_queue_time', '0')
             # Use st.markdown to create HTML content with the icon
             st.markdown(f"""
                 <div class="sm-grids-teal-green">
@@ -742,11 +944,11 @@ def inbound_call_within_after_20_graphs(
                     "left": "left",
                     "textStyle": {"fontSize": 12}
                 },
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -781,8 +983,24 @@ def inbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Category": "Queue time >= 20 Sec", "Call Count": inbound_abandon_after_20},
+                {"Category": "Queue time < 20 Sec", "Call Count": inbound_abandon_within_20}
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="inbound_abandoned_calls.csv",
+                mime="text/csv",
+                key="dl_inbound_abandoned"
+            )
 
         # Display pie chart for inbound answered calls
         with total3:
@@ -802,11 +1020,11 @@ def inbound_call_within_after_20_graphs(
                     "left": "left",
                     "textStyle": {"fontSize": 12}
                 },
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -841,8 +1059,24 @@ def inbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Category": "Queue time >= 20 Sec", "Call Count": inbound_answered_after_20},
+                {"Category": "Queue time < 20 Sec", "Call Count": inbound_answered_within_20}
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="inbound_answered_calls.csv",
+                mime="text/csv",
+                key="dl_inbound_answered"
+            )
 
         # Create a new layout for the next set of metrics
         total1, total2, total3 = st.columns([50, 1, 50])
@@ -904,11 +1138,11 @@ def inbound_call_within_after_20_graphs(
                         "textStyle": {"fontSize": 12}
                     }
                 ],
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -943,8 +1177,21 @@ def inbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame(filtered_data)
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name=f"{title.lower().replace(' ', '_')}.csv",
+                mime="text/csv",
+                key=f"dl_{title.lower().replace(' ', '_')}"
+            )
 
         # Display pie chart for outbound call success and failure
         with total3:
@@ -964,11 +1211,11 @@ def inbound_call_within_after_20_graphs(
                     "left": "left",
                     "textStyle": {"fontSize": 12}
                 },
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -1003,8 +1250,24 @@ def inbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Category": "Success (Percentage)", "Value": success_percentage},
+                {"Category": "Failure (Percentage)", "Value": failure_percentage}
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="call_success_failure.csv",
+                mime="text/csv",
+                key="dl_call_success_failure"
+            )
     except Exception as err:
         # Log any errors that occur and print the stack trace for debugging
         log.error(str(err))
@@ -1067,11 +1330,11 @@ def outbound_call_within_after_20_graphs(
                     "left": "left",
                     "textStyle": {"fontSize": 12}
                 },
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -1106,8 +1369,24 @@ def outbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Category": "Call Duration >= 20 Sec", "Call Count": outbound_answered_after_20},
+                {"Category": "Call Duration < 20 Sec", "Call Count": outbound_answered_within_20}
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="outbound_answered_calls.csv",
+                mime="text/csv",
+                key="dl_outbound_answered"
+            )
 
         # Display pie chart for agent status
         with total2:
@@ -1152,11 +1431,11 @@ def outbound_call_within_after_20_graphs(
                     "left": "left",
                     "textStyle": {"fontSize": 12}
                 },
-                'toolbox': {
-                    'feature': {
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
+                # 'toolbox': {
+                #     'feature': {
+                #         'saveAsImage': {'show': 'true'}
+                #     }
+                # },
                 "tooltip": {"trigger": "item"},
                 "legend": {
                     "top": "bottom",
@@ -1173,7 +1452,7 @@ def outbound_call_within_after_20_graphs(
                         "bottom": "5%",  # Adjust this value to move the chart upwards
                         "label": {
                             "position": 'inside',
-                            "formatter": '{c}',
+                            "formatter": "{c}",
                             "color": "#fff",
                             "fontSize": 10,
                         },
@@ -1192,8 +1471,21 @@ def outbound_call_within_after_20_graphs(
                 ],
             }
 
+            # Download option
+            df_dl = pd.DataFrame(final_value_list)
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             # Display the pie chart using st_echarts
             st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name=f"{title.lower().replace(' ', '_')}.csv",
+                mime="text/csv",
+                key=f"dl_{title.lower().replace(' ', '_')}"
+            )
 
         # Display pie chart for outbound call success and failure if campaign type is "OUTBOUND"
         if selected_campaign_type == "OUTBOUND":
@@ -1214,11 +1506,11 @@ def outbound_call_within_after_20_graphs(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1253,8 +1545,24 @@ def outbound_call_within_after_20_graphs(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Success (Percentage)", "Value": success_percentage},
+                    {"Category": "Failure (Percentage)", "Value": failure_percentage}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="call_success_failure.csv",
+                    mime="text/csv",
+                    key="dl_outbound_call_success_failure"
+                )
 
     except Exception as err:
         # Log any errors and print the stack trace for debugging
@@ -1325,11 +1633,11 @@ def total_agent_live_and_in_call(
                             "textStyle": {"fontSize": 12}
                         }
                     ],
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1364,8 +1672,21 @@ def total_agent_live_and_in_call(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame(filtered_data)
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name=f"{title.lower().replace(' ', '_')}.csv",
+                    mime="text/csv",
+                    key="dl_live_agents_status"
+                )
 
         # Display pie chart for total agents in call
         with col2:
@@ -1413,11 +1734,11 @@ def total_agent_live_and_in_call(
                             "textStyle": {"fontSize": 12}
                         }
                     ],
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1452,8 +1773,21 @@ def total_agent_live_and_in_call(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame(filtered_data)
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name=f"{title.lower().replace(' ', '_')}.csv",
+                    mime="text/csv",
+                    key="dl_agents_in_call_status"
+                )
     except Exception as err:
         # Log any errors and print the stack trace for debugging
         traceback.print_exc()
@@ -1501,11 +1835,11 @@ def only_inbound_and_outbound(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1540,8 +1874,24 @@ def only_inbound_and_outbound(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Call After 20 Sec", "Call Count": inbound_abandon_after_20},
+                    {"Category": "Call Within 20 Sec", "Call Count": inbound_abandon_within_20}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="inbound_abandoned_calls.csv",
+                    mime="text/csv",
+                    key="dl_only_inbound_abandoned"
+                )
 
             # Inbound Answered Calls
             with col2:
@@ -1559,11 +1909,11 @@ def only_inbound_and_outbound(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1598,8 +1948,24 @@ def only_inbound_and_outbound(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Call After 20 Sec", "Call Count": inbound_answered_after_20},
+                    {"Category": "Call Within 20 Sec", "Call Count": inbound_answered_within_20}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="inbound_answered_calls.csv",
+                    mime="text/csv",
+                    key="dl_only_inbound_answered"
+                )
 
             # Outbound Call Success and Failure
             with col3:
@@ -1617,11 +1983,11 @@ def only_inbound_and_outbound(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1656,8 +2022,24 @@ def only_inbound_and_outbound(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Success (Percentage)", "Value": success_percentage},
+                    {"Category": "Failure (Percentage)", "Value": failure_percentage}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="call_success_failure.csv",
+                    mime="text/csv",
+                    key="dl_only_inbound_success_failure"
+                )
 
         elif selected_campaign_type == "OUTBOUND":
             # Define columns for layout
@@ -1679,11 +2061,11 @@ def only_inbound_and_outbound(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1718,8 +2100,24 @@ def only_inbound_and_outbound(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Call After 20 Sec", "Call Count": outbound_answered_after_20},
+                    {"Category": "Call Within 20 Sec", "Call Count": outbound_answered_within_20}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="outbound_answered_calls.csv",
+                    mime="text/csv",
+                    key="dl_only_outbound_answered"
+                )
 
             # Outbound Call Success and Failure
             with col2:
@@ -1737,11 +2135,11 @@ def only_inbound_and_outbound(
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {"trigger": "item"},
                     "legend": {
                         "top": "bottom",
@@ -1776,8 +2174,24 @@ def only_inbound_and_outbound(
                     ],
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Category": "Success (Percentage)", "Value": success_percentage},
+                    {"Category": "Failure (Percentage)", "Value": failure_percentage}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the pie chart
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="call_success_failure.csv",
+                    mime="text/csv",
+                    key="dl_only_outbound_success_failure"
+                )
 
     except Exception as err:
         # Handle any exceptions
@@ -1810,11 +2224,11 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                         "left": "left",
                         "textStyle": {"fontSize": 12}
                     },
-                    'toolbox': {
-                        'feature': {
-                            'saveAsImage': {'show': 'true'}
-                        }
-                    },
+                    # 'toolbox': {
+                    #     'feature': {
+                    #         'saveAsImage': {'show': 'true'}
+                    #     }
+                    # },
                     "tooltip": {
                         "formatter": 'SLA <br/>SCORE : {c}%'
                     },
@@ -1871,8 +2285,23 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                     ]
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Metric": "SLA Score", "Value": SLA}
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the gauge chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="sla_score.csv",
+                    mime="text/csv",
+                    key="dl_sla_score"
+                )
 
             with col2:
                 call_status_disposition_dict = call_status_disposition_dict.get('call_status_disposition', {})
@@ -1894,8 +2323,7 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                     'toolbox': {
                         'feature': {
                             "magicType": {"show": "true", "type": ['bar', 'line']},
-                            "restore": {"show": "true"},
-                            'saveAsImage': {'show': 'true'}
+                            "restore": {"show": "true"}
                         }
                     },
                     "tooltip": {
@@ -1941,8 +2369,23 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                     ]
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Disposition": k, "Count": v} for k, v in zip(keys_list, values_list)
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the bar chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="call_status_disposition.csv",
+                    mime="text/csv",
+                    key="dl_call_status_disposition_inbound_all"
+                )
 
         elif selected_campaign_type == "OUTBOUND":
             col1, col2, col3 = st.columns([1, 70, 1])
@@ -1966,8 +2409,7 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                     'toolbox': {
                         'feature': {
                             "magicType": {"show": "true", "type": ['bar', 'line']},
-                            "restore": {"show": "true"},
-                            'saveAsImage': {'show': 'true'}
+                            "restore": {"show": "true"}
                         }
                     },
                     "tooltip": {
@@ -2013,8 +2455,192 @@ def SLA_and_Call_status_dis_graphs(SLA_dict, call_status_disposition_dict, selec
                     ]
                 }
 
+                # Download option
+                df_dl = pd.DataFrame([
+                    {"Disposition": k, "Count": v} for k, v in zip(keys_list, values_list)
+                ])
+                df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+                csv = df_dl.to_csv(index=False).encode('utf-8')
+
                 # Display the bar chart using st_echarts
                 st_echarts(options=options)
+
+                st.download_button(
+                    label="📥 Download",
+                    data=csv,
+                    file_name="call_status_disposition.csv",
+                    mime="text/csv",
+                    key="dl_call_status_disposition_outbound"
+                )
+
+    except Exception as err:
+        # Log and print the error
+        log.error(str(err))
+        traceback.print_exc()
+
+
+def call_in_queue_and_ivr_graphs(call_in_queue_dict, ivr_performance_report_dict):
+    """
+    Displays two graphs: one for call queue times and another for IVR performance.
+
+    Args:
+        call_in_queue_dict (dict): Dictionary containing call queue data.
+        ivr_performance_report_dict (dict): Dictionary containing IVR performance data.
+
+    Returns:
+        None
+    """
+    try:
+        # Define columns for layout
+        col1, col3, col2 = st.columns([50, 1, 50])
+
+        # Extract call queue data
+        phone_no_list = call_in_queue_dict.get('phone_no_list', [0])
+        queue_time_list = call_in_queue_dict.get('queue_time_list', [0])
+
+        # Set default values if lists are empty
+        if not phone_no_list and not queue_time_list:
+            phone_no_list = [0]
+            queue_time_list = [0]
+
+        with col1:
+            # Configure options for the bar chart
+            options = {
+                "title": {
+                    "text": "Top 5 Queue Calls",
+                    "left": "left",
+                    "textStyle": {"fontSize": 12}
+                },
+                'toolbox': {
+                    'feature': {
+                        "magicType": {"show": "true", "type": ['bar', 'line']},
+                        "restore": {"show": "true"}
+                    }
+                },
+                "tooltip": {
+                    "trigger": 'axis',
+                    "axisPointer": {"type": 'shadow'}
+                },
+                "grid": {
+                    "left": '3%',
+                    "right": '4%',
+                    "bottom": '3%',
+                    "containLabel": "true"
+                },
+                "xAxis": [
+                    {
+                        "type": 'category',
+                        "data": phone_no_list,
+                        "axisTick": {"alignWithLabel": "true"},
+                        "axisLabel": {
+                            "rotate": 45,
+                            "interval": 0,
+                            "margin": 10,
+                            "formatter": "{value}"
+                        }
+                    }
+                ],
+                "yAxis": [{"type": 'value'}],
+                "series": [
+                    {
+                        "name": 'Sec',
+                        "type": 'bar',
+                        "barWidth": '60%',
+                        "data": queue_time_list,
+                        "color": ['#0a72c2']
+                    }
+                ]
+            }
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Phone Number": p, "Queue Time (Seconds)": q} for p, q in zip(phone_no_list, queue_time_list)
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
+            # Display the bar chart using st_echarts
+            st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="top_5_queue_calls.csv",
+                mime="text/csv",
+                key="dl_top_5_queue_calls"
+            )
+
+        # Extract IVR performance data
+        ivr_performance_dict = ivr_performance_report_dict.get('ivrperformance', {})
+        exception = int(ivr_performance_dict.get('exception', 0))
+        ivr_abandoned = int(ivr_performance_dict.get('ivr_abandoned', 0))
+        call_to_agent = int(ivr_performance_dict.get('call_to_agent', 0))
+
+        # Prepare data for the pie chart
+        final_list = [
+            #{"value": exception, "name": "Exception"}
+            #{"value": ivr_abandoned, "name": "IVR Abandoned"},
+            {"value": call_to_agent, "name": "Transferred To Campaign"}
+        ]
+
+        with col2:
+            # Configure options for the pie chart
+            options = {
+                "title": {
+                    "text": "IVR Live Performance",
+                    "left": "left",
+                    "textStyle": {"fontSize": 12}
+                },
+                # 'toolbox': {
+                #     'feature': {'saveAsImage': {'show': 'true'}}
+                # },
+                "tooltip": {"trigger": "item"},
+                "legend": {
+                    "bottom": "bottom",
+                    "itemHeight": 14,
+                    "itemWidth": 10,
+                    "align": "auto",
+                    "left": "center"
+                },
+                "dataset": [{"source": final_list, "bottom": "25%"}],
+                "series": [
+                    {
+                        "name": 'Call',
+                        "type": "pie",
+                        "radius": ['40%', '70%'],
+                        "label": {
+                            "position": "inside",
+                            "formatter": "{d}%",
+                            "color": "#fff",
+                            "fontSize": 10
+                        },
+                        "percentPrecision": 0,
+                        "emphasis": {
+                            "label": {"show": "true"},
+                            "itemStyle": {
+                                "shadowBlur": 10,
+                                "shadowOffsetX": 0,
+                                "shadowColor": "rgba(0, 0, 0, 0.5)"
+                            }
+                        },
+                        "color": ['#0a72c2', 'rgb(255,99,71)', '#00ff5e']
+                    }
+                ]
+            }
+            # Download option
+            df_dl = pd.DataFrame(final_list)
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
+            # Display the pie chart using st_echarts
+            st_echarts(options=options)
+
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="ivr_live_performance.csv",
+                mime="text/csv",
+                key="dl_ivr_live_performance"
+            )
 
     except Exception as err:
         # Log and print the error
@@ -2068,8 +2694,7 @@ def aht_agentwise_top_10_and_aht_call_volume_hourly_graphs(aht_agentwise_dict, a
                 "toolbox": {
                     "feature": {
                         "magicType": {"show": "true", "type": ['bar', 'line']},
-                        "restore": {"show": "true"},
-                        "saveAsImage": {"show": "true"}
+                        "restore": {"show": "true"}
                     }
                 },
                 "legend": {
@@ -2125,20 +2750,39 @@ def aht_agentwise_top_10_and_aht_call_volume_hourly_graphs(aht_agentwise_dict, a
                     }
                 ]
             }
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Agent ID": agent_id, "AHT": aht, "Call Volume": vol}
+                for agent_id, aht, vol in zip(agent_id_list, agent_aht_list, agent_call_volume)
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
+
             st_echarts(options=option)
 
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="agent_performance.csv",
+                mime="text/csv",
+                key="dl_agent_performance"
+            )
+
         # Extract hourly data
-        hour_list = aht_and_call_volume_dict.get('hour_list',
-                                                  ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
-                                                   '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21',
-                                                   '22', '23'])
+        hour_list = aht_and_call_volume_dict.get('hour_list',['00','01', '02', '03', '04', '05', '06', '07', '08', '09', '10','11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21','22', '23'])
+
+        # print(hour_list,"hhhhhhhhhhhh",type(hour_list))
+
         aht_value_list = aht_and_call_volume_dict.get('aht_value_list', [0]*24)
         call_volume_list = aht_and_call_volume_dict.get('call_volue_list', [0]*24)
-
         # Rearrange hour_list to move '00' to the end
-        if '00' in hour_list:
-            hour_list.remove('00')
-            hour_list.append('00')
+        if '00' not  in hour_list:
+            try:
+                hour_list.remove('00')
+                hour_list.insert(0, '00')
+            except:
+                hour_list = ['00','01', '02', '03', '04', '05', '06', '07', '08', '09', '10','11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21','22', '23']
+        
 
         with col2:
             options = {
@@ -2159,7 +2803,13 @@ def aht_agentwise_top_10_and_aht_call_volume_hourly_graphs(aht_agentwise_dict, a
                     "feature": {
                         "magicType": {"show": "true", "type": ['bar', 'line']},
                         "restore": {"show": "true"},
-                        "saveAsImage": {"show": "true"}
+                        # "saveAsImage": {"show": True}
+                        # "saveAsImage": {
+                        #     "show": True,
+                        #     "title": "Download",
+                        #     "type": "png",
+                        #     "pixelRatio": 2
+                        # }
                     }
                 },
                 "grid": {
@@ -2204,148 +2854,23 @@ def aht_agentwise_top_10_and_aht_call_volume_hourly_graphs(aht_agentwise_dict, a
                     }
                 ]
             }
-            st_echarts(options=options)
-    except Exception as err:
-        # Log and print the error
-        log.error(str(err))
-        traceback.print_exc()
+            # Download option
+            df_dl = pd.DataFrame([
+                {"Hour": h, "AHT (Seconds)": a, "Call Volume": c}
+                for h, a, c in zip(hour_list, aht_value_list, call_volume_list)
+            ])
+            df_dl.insert(0, "Campaign", st.session_state.get("selected_campaign_name", "All"))
+            csv = df_dl.to_csv(index=False).encode('utf-8')
 
+            st_echarts(options=options,renderer="canvas")
 
-def call_in_queue_and_ivr_graphs(call_in_queue_dict, ivr_performance_report_dict):
-    """
-    Displays two graphs: one for call queue times and another for IVR performance.
-
-    Args:
-        call_in_queue_dict (dict): Dictionary containing call queue data.
-        ivr_performance_report_dict (dict): Dictionary containing IVR performance data.
-
-    Returns:
-        None
-    """
-    try:
-        # Define columns for layout
-        col1, col3, col2 = st.columns([50, 1, 50])
-
-        # Extract call queue data
-        phone_no_list = call_in_queue_dict.get('phone_no_list', [0])
-        queue_time_list = call_in_queue_dict.get('queue_time_list', [0])
-
-        # Set default values if lists are empty
-        if not phone_no_list and not queue_time_list:
-            phone_no_list = [0]
-            queue_time_list = [0]
-
-        with col1:
-            # Configure options for the bar chart
-            options = {
-                "title": {
-                    "text": "Top 5 Queue Calls",
-                    "left": "left",
-                    "textStyle": {"fontSize": 12}
-                },
-                'toolbox': {
-                    'feature': {
-                        "magicType": {"show": "true", "type": ['bar', 'line']},
-                        "restore": {"show": "true"},
-                        'saveAsImage': {'show': 'true'}
-                    }
-                },
-                "tooltip": {
-                    "trigger": 'axis',
-                    "axisPointer": {"type": 'shadow'}
-                },
-                "grid": {
-                    "left": '3%',
-                    "right": '4%',
-                    "bottom": '3%',
-                    "containLabel": "true"
-                },
-                "xAxis": [
-                    {
-                        "type": 'category',
-                        "data": phone_no_list,
-                        "axisTick": {"alignWithLabel": "true"},
-                        "axisLabel": {
-                            "rotate": 45,
-                            "interval": 0,
-                            "margin": 10,
-                            "formatter": "{value}"
-                        }
-                    }
-                ],
-                "yAxis": [{"type": 'value'}],
-                "series": [
-                    {
-                        "name": 'Sec',
-                        "type": 'bar',
-                        "barWidth": '60%',
-                        "data": queue_time_list,
-                        "color": ['#0a72c2']
-                    }
-                ]
-            }
-            # Display the bar chart using st_echarts
-            st_echarts(options=options)
-
-        # Extract IVR performance data
-        ivr_performance_dict = ivr_performance_report_dict.get('ivrperformance', {})
-        exception = int(ivr_performance_dict.get('exception', 0))
-        ivr_abandoned = int(ivr_performance_dict.get('ivr_abandoned', 0))
-        call_to_agent = int(ivr_performance_dict.get('call_to_agent', 0))
-
-        # Prepare data for the pie chart
-        final_list = [
-            #{"value": exception, "name": "Exception"}
-            #{"value": ivr_abandoned, "name": "IVR Abandoned"},
-            {"value": call_to_agent, "name": "Transferred To Campaign"}
-        ]
-
-        with col2:
-            # Configure options for the pie chart
-            options = {
-                "title": {
-                    "text": "IVR Live Performance",
-                    "left": "left",
-                    "textStyle": {"fontSize": 12}
-                },
-                'toolbox': {
-                    'feature': {'saveAsImage': {'show': 'true'}}
-                },
-                "tooltip": {"trigger": "item"},
-                "legend": {
-                    "bottom": "bottom",
-                    "itemHeight": 14,
-                    "itemWidth": 10,
-                    "align": "auto",
-                    "left": "center"
-                },
-                "dataset": [{"source": final_list, "bottom": "25%"}],
-                "series": [
-                    {
-                        "name": 'Call',
-                        "type": "pie",
-                        "radius": ['40%', '70%'],
-                        "label": {
-                            "position": "inside",
-                            "formatter": "{d}%",
-                            "color": "#fff",
-                            "fontSize": 10
-                        },
-                        "percentPrecision": 0,
-                        "emphasis": {
-                            "label": {"show": "true"},
-                            "itemStyle": {
-                                "shadowBlur": 10,
-                                "shadowOffsetX": 0,
-                                "shadowColor": "rgba(0, 0, 0, 0.5)"
-                            }
-                        },
-                        "color": ['#0a72c2', 'rgb(255,99,71)', '#00ff5e']
-                    }
-                ]
-            }
-            # Display the pie chart using st_echarts
-            st_echarts(options=options)
+            st.download_button(
+                label="📥 Download",
+                data=csv,
+                file_name="call_trend_hourly.csv",
+                mime="text/csv",
+                key="dl_call_trend_hourly"
+            )
 
     except Exception as err:
         # Log and print the error
@@ -2434,7 +2959,7 @@ outbound_answered_call_dict, outbound_call_busy_dict, outbound_call_disconnected
             # Create a directory for the date range if "Customize Date" is selected
             date_range_dir = f"{start_date}_{end_date}"
             file_path = os.path.join(filter_path, selected_campaign_name, selected_filter_name, selected_campaign_type, date_range_dir, f"{today}.json")
-        
+
         # Path to the CSV file containing raw data
         tmp_path_csv = os.path.join(download_csv_row_data, selected_campaign_name, f"{yesterday_date}.csv")
 
@@ -2485,14 +3010,13 @@ def main():
 
     # Access URL parameters and extract relevant data
     campaign_names_list, status, session, username = access_url_parm()  # Retrieve URL parameters, session, and username
-    
+
     if campaign_names_list != None and status != None and session != None and username != None:
         # Check if there are campaign names or if the status is not empty
         if len(campaign_names_list) != 0 or status != "":
             # Proceed if the status is "SUCCESS"
             if status == "SUCCESS":
                 dashboard_filter = dashboard_list()
-                #print(dashboard_filter,"sssssssssssssssddddddddddddddfffffffffffff")
 
                 # Add a link to the admin page
                 st.markdown(
@@ -2501,17 +3025,17 @@ def main():
                     """,
                     unsafe_allow_html=True,
                 )
-                
+
                 if dashboard_filter == "telephony_dashboard" or dashboard_filter == None:
-                    
+
                     count = st_autorefresh(interval=dashboard_reload_time, limit=1000000000, key="fizzbuzzcounter")
-                    selected_campaign_name,selected_campaign_type,start_date, end_date, choose_analytics, selected_filter_name = select_box(campaign_names_list)
-                    
+                    selected_campaign_name,selected_agent_filter,selected_campaign_type,start_date, end_date, choose_analytics, selected_filter_name, selected_skills_name, selected_list_name = select_box(campaign_names_list)
+
                     # Display the dashboard data and image
                     st.markdown(
                        f"""
                            <div class="msg" id="dashboard_data_msg">
-                               {choose_analytics}            
+                               {choose_analytics}
                            </div>
                        """,
                        unsafe_allow_html=True,
@@ -2522,7 +3046,7 @@ def main():
                         # If the filter is "Today", auto-refresh the dashboard
                         if selected_filter_name == "Today":
                             with st.spinner('Please wait...'):
-                                data = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type)
+                                data = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type,selected_agent_filter,selected_skills_name, selected_list_name)
 
                                 average_handling_time_dict = data[0]
                                 average_wait_time_dict = data[1]
@@ -2548,7 +3072,7 @@ def main():
                                 aht_and_call_volume_dict = data[21]
                                 ivr_performance_report_dict = data[22]
 
-                            
+
                             # Display various metric graphs
                             metric_graphs_average(
                                 average_handling_time_dict,
@@ -2632,13 +3156,16 @@ def main():
                             today = datetime.now().date()  # Get today's date
                             if selected_filter_name != "Customize Date":
                                 # Construct the file path for the JSON data
-                                file_path = os.path.join(filter_path, selected_campaign_name, selected_filter_name, selected_campaign_type, f"{today}.json")
+                                file_path = os.path.join(filter_path, selected_campaign_name, selected_filter_name, selected_campaign_type, str(selected_agent_filter), f"{today}.json")
                             else:
-                                # Construct the file path for the JSON data with a custom date range
-                                date_range_dir = f"{start_date}_{end_date}"
-                                file_path = os.path.join(filter_path, selected_campaign_name, selected_filter_name, selected_campaign_type, date_range_dir, f"{today}.json")
+                                if selected_skills_name == "ALL" and selected_list_name == "ALL":
+                                    # Construct the file path for the JSON data with a custom date range
+                                    date_range_dir = f"{start_date}_{end_date}"
+                                    file_path = os.path.join(filter_path, selected_campaign_name, selected_filter_name, selected_campaign_type, str(selected_agent_filter), date_range_dir, f"{today}.json")
+                                else:
+                                    file_path = None
 
-                            data = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type)
+                            data = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type,selected_agent_filter,selected_skills_name, selected_list_name)
 
                             if not os.path.exists(file_path):
                                 # If the JSON file does not exist, retrieve and process data
@@ -2699,7 +3226,7 @@ def main():
                                         aht_and_call_volume_dict
                                     ] = data
 
-                             
+
                             # Display metric graphs based on the loaded data
                             metric_graphs_average(
                                 average_handling_time_dict,
@@ -2857,6 +3384,4 @@ def main():
 # Run the main function if this script is executed
 if __name__ == "__main__":
     main()
-
-
 

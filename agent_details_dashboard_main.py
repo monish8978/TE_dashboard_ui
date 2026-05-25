@@ -196,7 +196,7 @@ def filter_for_date_wise(selected_campaign_name):
         from datetime import datetime
 
         # List of available date filters
-        filter_list = ["Yesterday", "Last 7 Days", "Last Thirty Days", "Last 3 Months", "Last 6 Months", "Last Year"]
+        filter_list = ["Today","Yesterday", "Last 7 Days", "Last Thirty Days", "Last 3 Months", "Last 6 Months", "Last Year"]
 
         # Create a sidebar with a select box to choose the filter
         #with st.sidebar:
@@ -456,8 +456,8 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
 
                 # Extracting the time part from the Productive_Hours column and converting to hours
                 productive_df['Total_Hours'] = productive_df['Productive_Hours'].apply(
-                    lambda x: int(x.split(' ')[-1].split(':')[0]) + 
-                            int(x.split(' ')[-1].split(':')[1]) / 60 + 
+                    lambda x: int(x.split(' ')[-1].split(':')[0]) +
+                            int(x.split(' ')[-1].split(':')[1]) / 60 +
                             int(x.split(' ')[-1].split(':')[2]) / 3600
                 )
                 # Round the Total_Hours to 2 decimal places
@@ -483,13 +483,10 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
                     'feature': {
                         "magicType": {
                             "show": "true",
-                            "type": ['bar','line'] 
+                            "type": ['bar','line']
                         },
-                        "restore": { 
-                            "show": "true" 
-                        },
-                        'saveAsImage': {
-                            'show': 'true'
+                        "restore": {
+                            "show": "true"
                         }
 
                     }
@@ -540,7 +537,7 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
             }
             # Display the pie chart using st_echarts
             st_echarts(options=options)
-        
+
         with col3:
             if not unproductive_df.empty:
                 # Ensure that the Productive_Hours column is of type string
@@ -548,8 +545,8 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
 
                 # Extracting the time part from the Productive_Hours column and converting to hours
                 unproductive_df['Total_Hours'] = unproductive_df['Unproductive_Hours'].apply(
-                    lambda x: int(x.split(' ')[-1].split(':')[0]) + 
-                            int(x.split(' ')[-1].split(':')[1]) / 60 + 
+                    lambda x: int(x.split(' ')[-1].split(':')[0]) +
+                            int(x.split(' ')[-1].split(':')[1]) / 60 +
                             int(x.split(' ')[-1].split(':')[2]) / 3600
                 )
                 # Round the Total_Hours to 2 decimal places
@@ -588,9 +585,6 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -628,7 +622,9 @@ def productive_and_unproductive_graphs(productive_df,unproductive_df):
                             "focus": "series"
                         },
                         "data": unproductive_hour_list,
-                        "color": ['#0a72c2'],
+                        "color": [
+                                '#0a72c2'
+                            ],
                     }
                 ]
             }
@@ -659,23 +655,20 @@ def wait_time_graphs(wait_time_df,hourly_trends_df,month_trends_df,days_trends_d
 
             options = {
                 "title": {
-                    "text": "Wait Time (Top 10 Agent)",
-                    "left": "left",
-                    "textStyle": {
-                        "fontSize": 12
+                        "text": "Wait Time (Top 10 Agent)",
+                        "left": "left",
+                        "textStyle": {
+                            "fontSize": 12
                     }
                 },
                 'toolbox': {
                     'feature': {
-                        "magicType": { 
-                            "show": "true", 
-                            "type": ['bar','line'] 
+                        "magicType": {
+                            "show": "true",
+                            "type": ['bar','line']
                         },
                         "restore": {
-                            "show": "true" 
-                        },
-                        'saveAsImage': { 
-                            'show': 'true' 
+                            "show": "true"
                         }
                     }
                 },
@@ -693,17 +686,17 @@ def wait_time_graphs(wait_time_df,hourly_trends_df,month_trends_df,days_trends_d
                 },
                 "xAxis": [
                     {
-                    "type": 'category',
-                    "data": agent_name_list,
-                    "axisTick": {
-                        "alignWithLabel": "true"
-                    },
-                    "axisLabel": {
-                        "rotate": 45,  # Rotate x-axis labels by 45 degrees
-                        "interval": 0,  # Display all labels
-                        "margin": 10,  # Adjust margin to avoid overlapping
-                        "formatter": "{value}"
-                    }
+                        "type": 'category',
+                        "data": agent_name_list,
+                        "axisTick": {
+                            "alignWithLabel": "true"
+                        },
+                        "axisLabel": {
+                            "rotate": 45,  # Rotate x-axis labels by 45 degrees
+                            "interval": 0,  # Display all labels
+                            "margin": 10,  # Adjust margin to avoid overlapping
+                            "formatter": "{value}"
+                        }
                     }
                 ],
                 "yAxis": [
@@ -725,9 +718,9 @@ def wait_time_graphs(wait_time_df,hourly_trends_df,month_trends_df,days_trends_d
             }
             # Display the pie chart using st_echarts
             st_echarts(options=options)
-        
+
         with col3:
-            if selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
+            if selected_filter_name == "Today" or selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
                 title_name = "(Hourly)"
                 tmp_list = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
                 tmp_wait_time_list = []
@@ -834,9 +827,6 @@ def wait_time_graphs(wait_time_df,hourly_trends_df,month_trends_df,days_trends_d
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -913,15 +903,12 @@ def wrapup_time_graphs(wrapup_time_df,hourly_trends_df,month_trends_df,days_tren
                 },
                 'toolbox': {
                     'feature': {
-                        "magicType": { 
-                            "show": "true", 
-                            "type": ['bar','line'] 
+                        "magicType": {
+                            "show": "true",
+                            "type": ['bar','line']
                         },
                         "restore": {
-                            "show": "true" 
-                        },
-                        'saveAsImage': { 
-                            'show': 'true' 
+                            "show": "true"
                         }
                     }
                 },
@@ -971,9 +958,9 @@ def wrapup_time_graphs(wrapup_time_df,hourly_trends_df,month_trends_df,days_tren
             }
             # Display the pie chart using st_echarts
             st_echarts(options=options)
-        
+
         with col3:
-            if selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
+            if selected_filter_name == "Today" or selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
                 tmp_list = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
                 wrapup_time_lsit = []
                 title_name = "(Hourly)"
@@ -1054,7 +1041,7 @@ def wrapup_time_graphs(wrapup_time_df,hourly_trends_df,month_trends_df,days_tren
 
                     # Create the result list with default value 0.0 for all hours
                     wrapup_time_lsit = [wrapup_time_dict.get(hour, 0.0) for hour in tmp_list]
-                
+
 
             # Define the options dictionary for the ECharts
             options = {
@@ -1080,9 +1067,6 @@ def wrapup_time_graphs(wrapup_time_df,hourly_trends_df,month_trends_df,days_tren
                             "type": ['bar','line']
                         },
                         "restore": {
-                            "show": "true"
-                        },
-                        "saveAsImage": {
                             "show": "true"
                         }
                     }
@@ -1167,9 +1151,6 @@ def call_duration_graphs(call_duration_df,hourly_trends_df,month_trends_df,days_
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        'saveAsImage': {
-                            'show': 'true'
                         }
                     }
                 },
@@ -1219,9 +1200,9 @@ def call_duration_graphs(call_duration_df,hourly_trends_df,month_trends_df,days_
             }
             # Display the pie chart using st_echarts
             st_echarts(options=options)
-        
+
         with col3:
-            if selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
+            if selected_filter_name == "Today" or selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
                 tmp_list = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
                 call_duration_lsit = []
                 title_name = "(Hourly)"
@@ -1328,9 +1309,6 @@ def call_duration_graphs(call_duration_df,hourly_trends_df,month_trends_df,days_
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -1413,9 +1391,6 @@ def talk_time_graphs(talk_time_df,hourly_trends_df,month_trends_df,days_trends_d
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        'saveAsImage': {
-                            'show': 'true'
                         }
                     }
                 },
@@ -1465,9 +1440,9 @@ def talk_time_graphs(talk_time_df,hourly_trends_df,month_trends_df,days_trends_d
             }
             # Display the pie chart using st_echarts
             st_echarts(options=options)
-        
+
         with col3:
-            if selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
+            if selected_filter_name == "Today" or selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
                 tmp_list = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
                 talk_time_list = []
                 title_name = "(Hourly)"
@@ -1574,9 +1549,6 @@ def talk_time_graphs(talk_time_df,hourly_trends_df,month_trends_df,days_trends_d
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -1659,9 +1631,6 @@ def queue_time_graphs(queue_time_df,hourly_trends_df,month_trends_df,days_trends
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        'saveAsImage': {
-                            'show': 'true'
                         }
                     }
                 },
@@ -1713,7 +1682,7 @@ def queue_time_graphs(queue_time_df,hourly_trends_df,month_trends_df,days_trends
             st_echarts(options=options)
 
         with col3:
-            if selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
+            if selected_filter_name == "Today" or selected_filter_name == "Yesterday" or selected_filter_name == "Last 7 Days":
                 tmp_list = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
                 queue_time_list = []
                 title_name = "(Hourly)"
@@ -1820,9 +1789,6 @@ def queue_time_graphs(queue_time_df,hourly_trends_df,month_trends_df,days_trends
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -1884,7 +1850,7 @@ def agent_score_graphs(agent_score_df,agent_score_hourly_df):
             else:
                 agent_id_list = []
                 score_list = []
-    
+
             # Define the options dictionary for the ECharts
             options = {
                 "title": {
@@ -1902,9 +1868,6 @@ def agent_score_graphs(agent_score_df,agent_score_hourly_df):
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        'saveAsImage': {
-                            'show': 'true'
                         }
                     }
                 },
@@ -2008,9 +1971,6 @@ def agent_score_graphs(agent_score_df,agent_score_hourly_df):
                         },
                         "restore": {
                             "show": "true"
-                        },
-                        "saveAsImage": {
-                            "show": "true"
                         }
                     }
                 },
@@ -2078,7 +2038,38 @@ def main():
             )
             if len(str(start_date)) != 0 and len(str(end_date)) != 0:
                 if selected_filter_name == "Today":
-                    pass
+                    final_data_list = send_post_request(selected_campaign_name, start_date, end_date)
+
+                    avg_productive_hour = final_data_list[0]
+                    avg_unproductive_hour = final_data_list[1]
+                    avg_wait_time_sec = final_data_list[2]
+                    avg_wrapup_time_sec = final_data_list[3]
+                    avg_call_duration_sec = final_data_list[4]
+                    avg_talk_time_sec = final_data_list[5]
+                    avg_queue_time_sec = final_data_list[6]
+                    avg_score = final_data_list[7]
+                    productive_df = pd.DataFrame(final_data_list[8])
+                    unproductive_df = pd.DataFrame(final_data_list[9])
+                    wait_time_df = pd.DataFrame(final_data_list[10])
+                    wrapup_time_df = pd.DataFrame(final_data_list[11])
+                    call_duration_df = pd.DataFrame(final_data_list[12])
+                    talk_time_df = pd.DataFrame(final_data_list[13])
+                    queue_time_df = pd.DataFrame(final_data_list[14])
+                    agent_score_df = pd.DataFrame(final_data_list[15])
+                    agent_score_hourly_df = pd.DataFrame(final_data_list[16])
+                    hourly_trends_df = pd.DataFrame(final_data_list[17])
+                    month_trends_df = pd.DataFrame(final_data_list[18])
+                    days_trends_df = pd.DataFrame(final_data_list[19])
+
+                    avg_metric_graphs_first(avg_productive_hour,avg_unproductive_hour,avg_wait_time_sec,avg_wrapup_time_sec)
+                    avg_metric_graphs_second(avg_call_duration_sec,avg_talk_time_sec,avg_queue_time_sec,avg_score)
+                    wait_time_graphs(wait_time_df,hourly_trends_df,month_trends_df,days_trends_df,selected_filter_name)
+                    wrapup_time_graphs(wrapup_time_df,hourly_trends_df,month_trends_df,days_trends_df,selected_filter_name)
+                    productive_and_unproductive_graphs(productive_df,unproductive_df)
+                    call_duration_graphs(call_duration_df,hourly_trends_df,month_trends_df,days_trends_df,selected_filter_name)
+                    talk_time_graphs(talk_time_df,hourly_trends_df,month_trends_df,days_trends_df,selected_filter_name)
+                    queue_time_graphs(queue_time_df,hourly_trends_df,month_trends_df,days_trends_df,selected_filter_name)
+                    agent_score_graphs(agent_score_df,agent_score_hourly_df)
                 else:
                     final_data_list = send_post_request(selected_campaign_name, start_date, end_date)
 
@@ -2101,7 +2092,7 @@ def main():
                     agent_score_hourly_df = pd.DataFrame(final_data_list[16])
                     hourly_trends_df = pd.DataFrame(final_data_list[17])
                     month_trends_df = pd.DataFrame(final_data_list[18])
-                    days_trends_df = pd.DataFrame(final_data_list[19]) 
+                    days_trends_df = pd.DataFrame(final_data_list[19])
 
                     avg_metric_graphs_first(avg_productive_hour,avg_unproductive_hour,avg_wait_time_sec,avg_wrapup_time_sec)
                     avg_metric_graphs_second(avg_call_duration_sec,avg_talk_time_sec,avg_queue_time_sec,avg_score)

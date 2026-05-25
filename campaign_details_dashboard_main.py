@@ -126,7 +126,7 @@ def sidebar_filter(campaign_names_list):
 def campaign_type_filter():
     try:
         campaign_type_list = ["ALL","INBOUND","OUTBOUND"]
-        
+
         selected_campaign_type = st.selectbox("Select Campaign Type", campaign_type_list)
         # return campaign name
         return selected_campaign_type
@@ -207,7 +207,7 @@ def filter_for_date_wise(selected_campaign_name):
         from datetime import datetime
 
         # List of available date filters
-        filter_list = ["Yesterday", "Last 7 Days", "Last Thirty Days", "Last 3 Months", "Last 6 Months", "Last Year", "Customize Date"]
+        filter_list = ["Today","Yesterday", "Last 7 Days", "Last Thirty Days", "Last 3 Months", "Last 6 Months", "Last Year", "Customize Date"]
 
         # Create a sidebar with a select box to choose the filter
         #with st.sidebar:
@@ -537,8 +537,7 @@ def region_call_and_success_failure_graphs(
                 "toolbox": {
                     "feature": {
                         "magicType": { "show": "true", "type": ['bar','line'] },
-                        "restore": { "show": "true" },
-                        "saveAsImage": { "show": "true" }
+                        "restore": { "show": "true" }
                     }
                 },
                 "legend": {
@@ -669,8 +668,7 @@ def region_call_and_success_failure_graphs(
                 "toolbox": {
                     "feature": {
                         "magicType": { "show": "true", "type": ['bar','line'] },
-                        "restore": { "show": "true" },
-                        "saveAsImage": { "show": "true" }
+                        "restore": { "show": "true" }
                     }
                 },
                 "legend": {
@@ -1150,8 +1148,7 @@ def operator_call_and_success_failure_graphs(
                 "toolbox": {
                     "feature": {
                         "magicType": { "show": "true", "type": ['bar','line'] },
-                        "restore": { "show": "true" },
-                        "saveAsImage": { "show": "true" }
+                        "restore": { "show": "true" }
                     }
                 },
                 "legend": {
@@ -1278,8 +1275,7 @@ def operator_call_and_success_failure_graphs(
                 "toolbox": {
                     "feature": {
                         "magicType": { "show": "true", "type": ['bar','line'] },
-                        "restore": { "show": "true" },
-                        "saveAsImage": { "show": "true" }
+                        "restore": { "show": "true" }
                     }
                 },
                 "legend": {
@@ -1363,7 +1359,60 @@ def main():
             if len(str(start_date)) != 0 and len(str(end_date)) != 0:
 
                 if selected_filter_name == "Today":
-                    pass
+                    final_data_list = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type)
+
+                    total_call_count_data_set_df = pd.DataFrame(final_data_list[0])
+                    total_inbound_call_data_set_df = pd.DataFrame(final_data_list[1])
+                    total_outbound_call_data_set_df = pd.DataFrame(final_data_list[2])
+                    auto_dial_df = pd.DataFrame(final_data_list[3])
+                    preview_df = pd.DataFrame(final_data_list[4])
+                    progressive_df = pd.DataFrame(final_data_list[5])
+                    success_failure_region_wise_data_set_df = pd.DataFrame(final_data_list[7])
+                    success_failure_operator_wise_data_set_df  = pd.DataFrame(final_data_list[10])
+                    region_call_count_hour_data_set_df = final_data_list[19]
+                    state_list = final_data_list[20]
+                    over_all_call_status_dis_data_set_df       = pd.DataFrame(final_data_list[12])
+                    airtel_operator = final_data_list[13]
+                    other_operator = final_data_list[14]
+                    Reliance_operator = final_data_list[15]
+                    BSNL_MTNL_operator = final_data_list[16]
+                    Vodafone_operator = final_data_list[17]
+                    over_all_call_count_hourly_data_set_value = final_data_list[18]
+
+                    metric_graphs(
+                        total_call_count_data_set_df,
+                        total_inbound_call_data_set_df,
+                        total_outbound_call_data_set_df,
+                        auto_dial_df,
+                        preview_df,
+                        progressive_df,
+                        selected_campaign_type
+                    )
+
+                    rw_op_list = ["Region Wise Data","Operator Wise Data"]
+                    rw_ow = st.selectbox("Select Data Region and Operator Wise", rw_op_list)
+
+                    if rw_ow == "Region Wise Data":
+                        region_call_and_success_failure_graphs(
+                            success_failure_region_wise_data_set_df,
+                        )
+                        region_call_count_hourly_graphs(region_call_count_hour_data_set_df,state_list)
+                    else:
+                        operator_call_and_success_failure_graphs(
+                            success_failure_operator_wise_data_set_df,
+                        )
+                        operator_call_count_hourly_graphs(
+                            airtel_operator,
+                            other_operator,
+                            Reliance_operator,
+                            BSNL_MTNL_operator,
+                            Vodafone_operator,
+                        )
+
+                    over_all_call_count_hourly_graphs(
+                        over_all_call_count_hourly_data_set_value,
+                        over_all_call_status_dis_data_set_df,
+                    )
                 else:
                     final_data_list = send_post_request(selected_campaign_name, start_date, end_date, selected_filter_name, selected_campaign_type)
 
@@ -1440,5 +1489,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
